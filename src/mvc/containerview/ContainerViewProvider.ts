@@ -1,13 +1,39 @@
 import * as vscode from "vscode"
+import { ContainerStore } from "../../symfony/ContainerStore";
+import { ServiceDefinition } from "../../symfony/ServiceDefinition";
 import { ServiceDefinitionTreeItem } from "./ServiceDefinitionTreeItem";
 
-export class ContainerViewProvider implements vscode.TreeDataProvider<ServiceDefinitionTreeItem> {
-    onDidChangeTreeData?: vscode.Event<any>;
-    
-    getTreeItem(element: any): vscode.TreeItem | Thenable<vscode.TreeItem> {
+export class ContainerViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
+    readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
+    private _containerStore: ContainerStore = new ContainerStore()
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
+
+    getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
         return element
     }
-    getChildren(element?: any): vscode.ProviderResult<any[]> {
-        throw new Error("Method not implemented.");
+
+    getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
+        return new Promise(resolve => {
+            if (!element) {
+                let serviceDefinitions: ServiceDefinition[] = this._containerStore.serviceDefinitionList
+                let result: vscode.TreeItem[] = []
+
+                serviceDefinitions.forEach(serviceDefinition => {
+                    result.push(new ServiceDefinitionTreeItem(serviceDefinition))
+                });
+
+                resolve(result)
+            } else {
+                if(element instanceof ServiceDefinitionTreeItem) {
+                    resolve(element.childrenItems)
+                } else {
+                    resolve([])
+                }
+            }
+        })
     }
 }

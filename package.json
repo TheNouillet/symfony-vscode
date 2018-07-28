@@ -11,14 +11,22 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onView:containerView"
     ],
     "main": "./out/extension",
     "contributes": {
+        "views": {
+            "explorer": [
+                {
+                    "id": "containerView",
+                    "name": "Container view"
+                }
+            ]
+        },
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "symfony-vscode.refreshView",
+                "title": "Refresh Symfony container view"
             }
         ]
     },
