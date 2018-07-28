@@ -1,9 +1,9 @@
 import { ServiceDefinition } from "./ServiceDefinition";
 import { ContainerProviderInterface } from "./provider/ContainerProviderInterface";
-import { DummyProvider } from "./provider/DummyProvider";
+import { ConsoleProvider } from "./provider/ConsoleProvider";
 
 export class ContainerStore {
-    private _containerProvider: ContainerProviderInterface = new DummyProvider()
+    private _containerProvider: ContainerProviderInterface = new ConsoleProvider()
     private _serviceDefinitionStore: ServiceDefinition[] = []
 
     constructor() {
