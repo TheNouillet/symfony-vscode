@@ -6,9 +6,14 @@ import { ServiceDefinitionTreeItem } from "./ServiceDefinitionTreeItem";
 export class ContainerViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
-    private _containerStore: ContainerStore = new ContainerStore()
+    private _containerStore: ContainerStore
+
+    constructor(containerStore: ContainerStore) {
+        this._containerStore = containerStore
+    }
 
     refresh(): void {
+        this._containerStore.refresh()
         this._onDidChangeTreeData.fire();
     }
 

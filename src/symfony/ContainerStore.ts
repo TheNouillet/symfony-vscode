@@ -1,15 +1,20 @@
 import { ServiceDefinition } from "./ServiceDefinition";
+import { ContainerProviderInterface } from "./provider/ContainerProviderInterface";
+import { DummyProvider } from "./provider/DummyProvider";
 
 export class ContainerStore {
-    get serviceDefinitionList() {
-        let result : ServiceDefinition[] = []
-        console.log("serviceDefinitionList()")
+    private _containerProvider: ContainerProviderInterface = new DummyProvider()
+    private _serviceDefinitionStore: ServiceDefinition[] = []
 
-        result.push(new ServiceDefinition('foo', '\\Foo', false))
-        result.push(new ServiceDefinition('bar', '\\Bar', false))
-        result.push(new ServiceDefinition('foo.bar', '\\Foo\\Bar', true))
-        result.push(new ServiceDefinition('form.type.form', 'Symfony\\Component\\Form\\Extension\\Core\\Type\\FormType', false))
+    constructor() {
+        this.refresh()
+    }
 
-        return result
+    refresh() {
+        this._serviceDefinitionStore = this._containerProvider.provideServiceDefinitions()
+    }
+
+    get serviceDefinitionList(): ServiceDefinition[] {
+        return this._serviceDefinitionStore
     }
 }
