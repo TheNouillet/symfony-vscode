@@ -12,7 +12,9 @@ export function activate(context: vscode.ExtensionContext) {
     let containerStore = new ContainerStore()
     const containerViewProvider = new ContainerViewProvider(containerStore)
 
-    vscode.window.registerTreeDataProvider("containerView", containerViewProvider)
+    containerStore.refresh().then(() => {
+        vscode.window.registerTreeDataProvider("containerView", containerViewProvider)
+    })
     vscode.commands.registerCommand('symfony-vscode.refreshView', () => containerViewProvider.refresh());
 }
 

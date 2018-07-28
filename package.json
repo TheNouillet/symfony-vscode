@@ -28,7 +28,22 @@
                 "command": "symfony-vscode.refreshView",
                 "title": "Refresh Symfony container view"
             }
-        ]
+        ],
+        "configuration": {
+            "title": "Symfony for VSCode",
+            "properties": {
+                "symfony-vscode.phpPath": {
+                    "type": "string",
+                    "default": "/usr/bin/php",
+                    "description": "Path to the PHP executable"
+                },
+                "symfony-vscode.consolePath": {
+                    "type": ["string", "null"],
+                    "default": null,
+                    "description": "Path to the Symfony console, relative to the root directeory. If null, the extension try to guess the path with the Symfony version from the composer.json file"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

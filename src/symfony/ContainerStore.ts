@@ -10,8 +10,13 @@ export class ContainerStore {
         this.refresh()
     }
 
-    refresh() {
-        this._serviceDefinitionStore = this._containerProvider.provideServiceDefinitions()
+    refresh(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
+                this._serviceDefinitionStore = servicesDefinitions
+                resolve()
+            }).catch(reason => reject(reason))
+        })
     }
 
     get serviceDefinitionList(): ServiceDefinition[] {

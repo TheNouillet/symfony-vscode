@@ -1,6 +1,10 @@
+import * as vscode from "vscode"
+import * as path from "path"
+
 import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
-import { spawn, execSync, ExecSyncOptions } from "child_process";
+import { execSync, ExecSyncOptions } from "child_process";
+import { ComposerJSON } from "../ComposerJSON";
 
 class CommandOptions implements ExecSyncOptions {
     cwd: string = ""
@@ -10,30 +14,58 @@ class CommandOptions implements ExecSyncOptions {
 }
 
 export class ConsoleProvider implements ContainerProviderInterface {
-    provideServiceDefinitions(): ServiceDefinition[] {
-        let result: ServiceDefinition[] = []
 
-        const cmd = this._getPhpExecutablePath() + " " + this._getExecutablePath() + " debug:container --show-private --format=json"
-        let buffer = execSync(cmd, new CommandOptions(this._getRootDirectory())).toString()
-        let obj = JSON.parse(buffer)
-        if(obj.definitions !== undefined) {
-            Object.keys(obj.definitions).forEach(key => {
-                result.push(new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public))
-            })
-        }
+    private _configuration = vscode.workspace.getConfiguration("symfony-vscode")
+    private _composerJson: ComposerJSON = new ComposerJSON()
 
-        return result
+    provideServiceDefinitions(): Promise<ServiceDefinition[]> {
+        return new Promise((resolve, reject) => {
+            this._getDebugCommand().then(infos => {
+                let result: ServiceDefinition[] = []
+                let buffer = execSync(infos.cmd, new CommandOptions(infos.cwd)).toString()
+                let obj = JSON.parse(buffer)
+                if(obj.definitions !== undefined) {
+                    Object.keys(obj.definitions).forEach(key => {
+                        result.push(new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public))
+                    })
+                }
+    
+                resolve(result)
+            }).catch(reason => reject(reason))
+        })
     }
 
-    private _getRootDirectory(): string {
-        return "/home/axel/projets/ezplatform2"
-    }
+    private _getDebugCommand(): Promise<{cmd: string, cwd: string}> {
+        return new Promise((resolve, reject) => {
+            this._composerJson.initialize()
+                .then(infos => {
+                    let cmd = this._getPhpExecutablePath() + " "
 
-    private _getExecutablePath(): string {
-        return "bin/console"
+                    let customConsolePath = this._configuration.get("consolePath")
+                    if(customConsolePath) {
+                        cmd += customConsolePath + " "
+                    } else {
+                        switch (infos.symfonyVersion) {
+                            case 2:
+                                cmd += "app/console "
+                                break;
+                            case 3:
+                            default:
+                                cmd += "bin/console "
+                                break;
+                        }
+                    }
+
+                    cmd += "debug:container --format=json"
+                    resolve({
+                        cmd: cmd,
+                        cwd: path.dirname(infos.uri.fsPath)
+                    })
+                }).catch(reason => reject(reason))
+        })
     }
 
     private _getPhpExecutablePath(): string {
-        return "/usr/bin/php7.1"
+        return this._configuration.get("phpPath")
     }
 }

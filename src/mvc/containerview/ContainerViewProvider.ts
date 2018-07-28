@@ -13,8 +13,9 @@ export class ContainerViewProvider implements vscode.TreeDataProvider<vscode.Tre
     }
 
     refresh(): void {
-        this._containerStore.refresh()
-        this._onDidChangeTreeData.fire();
+        this._containerStore.refresh().then(() => {
+            this._onDidChangeTreeData.fire();
+        })
     }
 
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
