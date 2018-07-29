@@ -5,7 +5,7 @@ import { DummyProvider } from "./provider/DummyProvider";
 import { RouteDefinition } from "./RouteDefinition";
 
 export class ContainerStore {
-    private _containerProvider: ContainerProviderInterface = new DummyProvider()
+    private _containerProvider: ContainerProviderInterface = new ConsoleProvider()
     private _serviceDefinitionStore: ServiceDefinition[] = []
     private _routeDefinitionStore: RouteDefinition[] = []
 

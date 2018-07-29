@@ -21,7 +21,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
 
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
         return new Promise((resolve, reject) => {
-            this._getDebugCommand().then(infos => {
+            this._getDebugCommand("debug:container").then(infos => {
                 let result: ServiceDefinition[] = []
                 let buffer = execSync(infos.cmd, new CommandOptions(infos.cwd)).toString()
                 let obj = JSON.parse(buffer)
@@ -37,12 +37,24 @@ export class ConsoleProvider implements ContainerProviderInterface {
     }
 
     provideRouteDefinitions(): Promise<RouteDefinition[]> {
-        return new Promise(resolve => {
-            resolve([])
+        let showAsseticRoutes = this._configuration.get("showAsseticRoutes")
+        return new Promise((resolve, reject) => {
+            this._getDebugCommand("debug:router").then(infos => {
+                let result: RouteDefinition[] = []
+                let buffer = execSync(infos.cmd, new CommandOptions(infos.cwd)).toString()
+                let obj = JSON.parse(buffer)
+                Object.keys(obj).forEach(key => {
+                    if(!(!showAsseticRoutes && key.match(/^_assetic_/))) {
+                        result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
+                    }
+                })
+    
+                resolve(result)
+            }).catch(reason => reject(reason))
         })
     }
 
-    private _getDebugCommand(): Promise<{cmd: string, cwd: string}> {
+    private _getDebugCommand(symfonyCommand: string): Promise<{cmd: string, cwd: string}> {
         return new Promise((resolve, reject) => {
             this._composerJson.initialize()
                 .then(infos => {
@@ -63,7 +75,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
                         }
                     }
 
-                    cmd += "debug:container --format=json"
+                    cmd += symfonyCommand + " --format=json"
                     resolve({
                         cmd: cmd,
                         cwd: path.dirname(infos.uri.fsPath)
