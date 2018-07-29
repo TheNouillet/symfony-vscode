@@ -27,10 +27,23 @@ export class ConsoleProvider implements ContainerProviderInterface {
                 let obj = JSON.parse(buffer)
                 if(obj.definitions !== undefined) {
                     Object.keys(obj.definitions).forEach(key => {
-                        result.push(new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public))
+                        result.push(new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
                     })
                 }
-    
+                if(obj.aliases !== undefined) {
+                    Object.keys(obj.aliases).forEach(key => {
+                        result.push(new ServiceDefinition(key, null, obj.aliases[key].public, obj.aliases[key].service))
+                    })
+                }
+                result.sort((a, b) => {
+                    if(a.id < b.id) {
+                        return -1
+                    }
+                    if(a.id > b.id) {
+                        return 1
+                    }
+                    return 0
+                })
                 resolve(result)
             }).catch(reason => reject(reason))
         })

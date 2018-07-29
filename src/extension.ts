@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { ServiceDefintionViewProvider } from './mvc/containerview/ServiceDefintionViewProvider';
 import { ContainerStore } from './symfony/ContainerStore';
 import { RouteDefintionViewProvider } from './mvc/containerview/RouteDefinitionViewProvider';
+import { FileWatchController } from './mvc/containerview/FileWatchController';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -23,6 +24,10 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
     })
     vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitionsView', () => routeDefinitionViewProvider.refresh());
+
+    let fileWatchController = new FileWatchController(serviceDefinitionViewProvider, routeDefinitionViewProvider)
+
+    context.subscriptions.push(fileWatchController)
 }
 
 // this method is called when your extension is deactivated

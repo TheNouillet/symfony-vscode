@@ -8,10 +8,10 @@ export class DummyProvider implements ContainerProviderInterface {
             let result: ServiceDefinition[] = []
             console.log("Dummy is providing...")
     
-            result.push(new ServiceDefinition('foo', '\\Foo', false))
-            result.push(new ServiceDefinition('bar', '\\Bar', false))
-            result.push(new ServiceDefinition('foo.bar', '\\Foo\\Bar', true))
-            result.push(new ServiceDefinition('form.type.form', 'Symfony\\Component\\Form\\Extension\\Core\\Type\\FormType', false))
+            result.push(new ServiceDefinition('foo', '\\Foo', false, null))
+            result.push(new ServiceDefinition('bar', '\\Bar', false, null))
+            result.push(new ServiceDefinition('foo.bar', '\\Foo\\Bar', true, null))
+            result.push(new ServiceDefinition('form.type.form', 'Symfony\\Component\\Form\\Extension\\Core\\Type\\FormType', false, null))
     
             resolve(result)
         })
