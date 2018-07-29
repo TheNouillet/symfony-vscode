@@ -12,14 +12,21 @@ export class ServiceDefinitionTreeItem extends vscode.TreeItem {
     }
 
     get tooltip() {
-        return this._serviceDefinition.className
+        if(this._serviceDefinition.alias !== null) {
+            return "Alias of " + this._serviceDefinition.alias
+        } else {
+            return this._serviceDefinition.className
+        }
     }
 
     get childrenItems() {
         let children: vscode.TreeItem[] = []
 
-        children.push(new vscode.TreeItem("Class : " + this._serviceDefinition.className, vscode.TreeItemCollapsibleState.None))
-        children.push(new vscode.TreeItem("Visibility : " + (this._serviceDefinition.isPublic ? "Is public" : "Is private"), vscode.TreeItemCollapsibleState.None))
+        if(this._serviceDefinition.alias !== null) {
+            children.push(new vscode.TreeItem("Alias : " + this._serviceDefinition.alias, vscode.TreeItemCollapsibleState.None))
+        } else {
+            children.push(new vscode.TreeItem("Class : " + this._serviceDefinition.className, vscode.TreeItemCollapsibleState.None))
+        }
 
         return children
     }

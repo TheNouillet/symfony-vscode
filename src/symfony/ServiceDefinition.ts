@@ -1,32 +1,13 @@
 export class ServiceDefinition {
-    private _id: string
-    private _className: string
-    private _public: boolean
+    public id: string
+    public className: string
+    public public: boolean
+    public alias: string
 
-    constructor(id: string, className: string, isPublic: boolean) {
+    constructor(id: string, className: string, isPublic: boolean, alias: string) {
         this.id = id
         this.className = className
-        this.isPublic = isPublic
-    }
-
-    get id() {
-        return this._id
-    }
-    set id(newId) {
-        this._id = newId
-    }
-
-    get className() {
-        return this._className
-    }
-    set className(newClassName) {
-        this._className = newClassName
-    }
-
-    get isPublic() {
-        return this._public
-    }
-    set isPublic(newIsPublic) {
-        this._public = newIsPublic
+        this.public = isPublic
+        this.alias = alias
     }
 }
