@@ -5,6 +5,7 @@ import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
 import { execSync, ExecSyncOptions } from "child_process";
 import { ComposerJSON } from "../ComposerJSON";
+import { RouteDefinition } from "../RouteDefinition";
 
 class CommandOptions implements ExecSyncOptions {
     cwd: string = ""
@@ -32,6 +33,12 @@ export class ConsoleProvider implements ContainerProviderInterface {
     
                 resolve(result)
             }).catch(reason => reject(reason))
+        })
+    }
+
+    provideRouteDefinitions(): Promise<RouteDefinition[]> {
+        return new Promise(resolve => {
+            resolve([])
         })
     }
 

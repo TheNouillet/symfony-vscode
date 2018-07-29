@@ -3,7 +3,7 @@ import { ContainerStore } from "../../symfony/ContainerStore";
 import { ServiceDefinition } from "../../symfony/ServiceDefinition";
 import { ServiceDefinitionTreeItem } from "./ServiceDefinitionTreeItem";
 
-export class ContainerViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
     private _containerStore: ContainerStore
@@ -13,7 +13,7 @@ export class ContainerViewProvider implements vscode.TreeDataProvider<vscode.Tre
     }
 
     refresh(): void {
-        this._containerStore.refresh().then(() => {
+        this._containerStore.refreshServiceDefinitions().then(() => {
             this._onDidChangeTreeData.fire();
         })
     }

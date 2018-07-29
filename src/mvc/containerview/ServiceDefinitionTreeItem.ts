@@ -19,7 +19,7 @@ export class ServiceDefinitionTreeItem extends vscode.TreeItem {
         let children: vscode.TreeItem[] = []
 
         children.push(new vscode.TreeItem("Class : " + this._serviceDefinition.className, vscode.TreeItemCollapsibleState.None))
-        children.push(new vscode.TreeItem("Visibility : " + (this._serviceDefinition.isPublic ? "Is public" : "Is private"), vscode.TreeItemCollapsibleState.None))
+        children.push(new vscode.TreeItem("Visibility : " + (this._serviceDefinition.public ? "Is public" : "Is private"), vscode.TreeItemCollapsibleState.None))
 
         return children
     }

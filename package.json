@@ -11,22 +11,40 @@
         "Other"
     ],
     "activationEvents": [
-        "onView:containerView"
+        "onView:serviceDefinitionsView",
+        "onView:routeDefinitionsView"
     ],
     "main": "./out/extension",
     "contributes": {
-        "views": {
-            "explorer": [
+        "viewsContainers": {
+            "activitybar": [
                 {
-                    "id": "containerView",
-                    "name": "Container view"
+                    "id": "symfonyViewsContainer",
+                    "title": "Symfony debug",
+                    "icon": "media/logo.svg"
+                }
+            ]
+        },
+        "views": {
+            "symfonyViewsContainer": [
+                {
+                    "id": "routeDefinitionsView",
+                    "name": "Route definitions view"
+                },
+                {
+                    "id": "serviceDefinitionsView",
+                    "name": "Service definitions view"
                 }
             ]
         },
         "commands": [
             {
-                "command": "symfony-vscode.refreshView",
-                "title": "Refresh Symfony container view"
+                "command": "symfony-vscode.refreshServiceDefinitionsView",
+                "title": "Symfony : Refresh service definitions view"
+            },
+            {
+                "command": "symfony-vscode.refreshRouteDefinitionsView",
+                "title": "Symfony : Refresh route definitions view"
             }
         ],
         "configuration": {
