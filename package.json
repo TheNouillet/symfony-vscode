@@ -43,13 +43,27 @@
         "commands": [
             {
                 "command": "symfony-vscode.refreshServiceDefinitionsView",
-                "title": "Symfony : Refresh service definitions view"
+                "title": "Refresh service definitions view",
+                "category": "Symfony"
             },
             {
                 "command": "symfony-vscode.refreshRouteDefinitionsView",
-                "title": "Symfony : Refresh route definitions view"
+                "title": "Refresh route definitions view",
+                "category": "Symfony"
             }
         ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "symfony-vscode.refreshServiceDefinitionsView",
+                    "when": "view == serviceDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.refreshRouteDefinitionsView",
+                    "when": "view == routeDefinitionsView"
+                }
+            ]
+        },
         "configuration": {
             "title": "Symfony for VSCode",
             "properties": {
