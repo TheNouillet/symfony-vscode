@@ -72,6 +72,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "If false, the extension doesn't try to auto detect the root direct from where it executes console commands. Useful if your PHP executable path relocate into a specific directory."
+                },
+                "symfony-vscode.showConsoleErrors": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If false, the extension doesn't show error messages caused by compilation errors."
                 }
             }
         }

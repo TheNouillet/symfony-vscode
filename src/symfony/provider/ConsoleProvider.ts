@@ -20,6 +20,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
     private _composerJson: ComposerJSON = new ComposerJSON()
 
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
+        let showErrors = this._configuration.get("showConsoleErrors")
         return new Promise((resolve, reject) => {
             this._getDebugCommand("debug:container").then(infos => {
                 let result: ServiceDefinition[] = []
@@ -47,13 +48,18 @@ export class ConsoleProvider implements ContainerProviderInterface {
                     })
                     resolve(result)
                 } catch (e) {
-                    reject(e.message)
+                    if(showErrors) {
+                        reject(e.message)
+                    } else {
+                        resolve([])
+                    }
                 }
             }).catch(reason => reject(reason))
         })
     }
 
     provideRouteDefinitions(): Promise<RouteDefinition[]> {
+        let showErrors = this._configuration.get("showConsoleErrors")
         let showAsseticRoutes = this._configuration.get("showAsseticRoutes")
         return new Promise((resolve, reject) => {
             this._getDebugCommand("debug:router").then(infos => {
@@ -77,7 +83,11 @@ export class ConsoleProvider implements ContainerProviderInterface {
                     })
                     resolve(result)
                 } catch(e) {
-                    reject(e.message)
+                    if(showErrors) {
+                        reject(e.message)
+                    } else {
+                        resolve([])
+                    }
                 }
             }).catch(reason => reject(reason))
         })

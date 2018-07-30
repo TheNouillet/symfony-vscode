@@ -40,6 +40,12 @@ A: You have to override the PHP executable path, and disable the root directory 
 
 ## Release Notes
 
+### 0.0.2
+
+* Added the `detectCwd` configuration to help with Symfony projects on Docker
+* Added more logging of errors
+    * Added the `showConsoleErrors` configuration to hide errors from the Symfony console
+
 ### 0.0.1
 
 Initial preview release
