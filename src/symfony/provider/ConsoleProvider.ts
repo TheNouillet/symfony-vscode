@@ -43,18 +43,6 @@ export class ConsoleProvider implements ContainerProviderInterface {
                     Object.keys(collection).forEach(key => {
                         result.push(collection[key])
                     });
-                    result = result.filter((service) => {
-                        return service.public == true
-                    })
-                    result.sort((a, b) => {
-                        if(a.id < b.id) {
-                            return -1
-                        }
-                        if(a.id > b.id) {
-                            return 1
-                        }
-                        return 0
-                    })
                     resolve(result)
                 } catch (e) {
                     if(showErrors) {

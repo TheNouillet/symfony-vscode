@@ -31,11 +31,23 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
         return new Promise(resolve => {
             if (!element) {
                 let serviceDefinitions: ServiceDefinition[] = this._containerStore.serviceDefinitionList
-                let result: vscode.TreeItem[] = []
+                let result: ServiceDefinitionTreeItem[] = []
 
                 serviceDefinitions.forEach(serviceDefinition => {
                     result.push(new ServiceDefinitionTreeItem(serviceDefinition))
                 });
+                result = result.filter((treeItem) => {
+                    return treeItem.serviceDefinition.public == true
+                })
+                result.sort((a, b) => {
+                    if(a.serviceDefinition.id < b.serviceDefinition.id) {
+                        return -1
+                    }
+                    if(a.serviceDefinition.id > b.serviceDefinition.id) {
+                        return 1
+                    }
+                    return 0
+                })
 
                 resolve(result)
             } else {

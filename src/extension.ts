@@ -5,7 +5,8 @@ import * as vscode from 'vscode';
 import { ServiceDefintionViewProvider } from './mvc/containerview/ServiceDefintionViewProvider';
 import { ContainerStore } from './symfony/ContainerStore';
 import { RouteDefintionViewProvider } from './mvc/containerview/RouteDefinitionViewProvider';
-import { FileWatchController } from './mvc/containerview/FileWatchController';
+import { FileWatchController } from './mvc/FileWatchController';
+import { AutocompleteController } from './mvc/AutocompleteController';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -22,8 +23,10 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitionsView', () => routeDefinitionViewProvider.refresh());
 
     let fileWatchController = new FileWatchController(serviceDefinitionViewProvider, routeDefinitionViewProvider)
+    let autocompleteController = new AutocompleteController(containerStore)
 
     context.subscriptions.push(fileWatchController)
+    context.subscriptions.push(autocompleteController)
 }
 
 // this method is called when your extension is deactivated
