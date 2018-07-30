@@ -49,6 +49,7 @@ A: You have to override the PHP executable path, and disable the root directory 
     * Added the `showConsoleErrors` setting to hide errors from the Symfony console
 * Added progress indicator on the status bar
 * Added class name for services aliases
+* Added autocomplete of services in YAML files
 
 ### 0.0.1
 
