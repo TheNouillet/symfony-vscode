@@ -10,11 +10,14 @@ export class RouteDefintionViewProvider implements vscode.TreeDataProvider<vscod
 
     constructor(containerStore: ContainerStore) {
         this._containerStore = containerStore
+        this.refresh()
     }
 
     refresh(): void {
         this._containerStore.refreshRouteDefinitions().then(() => {
             this._onDidChangeTreeData.fire();
+        }).catch(reason => {
+            vscode.window.showErrorMessage(reason)
         })
     }
 

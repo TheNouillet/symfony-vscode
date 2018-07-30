@@ -15,14 +15,10 @@ export function activate(context: vscode.ExtensionContext) {
     const serviceDefinitionViewProvider = new ServiceDefintionViewProvider(containerStore)
     const routeDefinitionViewProvider = new RouteDefintionViewProvider(containerStore)
 
-    containerStore.refreshServiceDefinitions().then(() => {
-        vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
-    })
+    vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitionsView', () => serviceDefinitionViewProvider.refresh());
 
-    containerStore.refreshRouteDefinitions().then(() => {
-        vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
-    })
+    vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitionsView', () => routeDefinitionViewProvider.refresh());
 
     let fileWatchController = new FileWatchController(serviceDefinitionViewProvider, routeDefinitionViewProvider)

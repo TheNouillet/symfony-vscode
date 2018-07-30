@@ -10,11 +10,14 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
 
     constructor(containerStore: ContainerStore) {
         this._containerStore = containerStore
+        this.refresh()
     }
 
     refresh(): void {
         this._containerStore.refreshServiceDefinitions().then(() => {
             this._onDidChangeTreeData.fire();
+        }).catch(reason => {
+            vscode.window.showErrorMessage(reason)
         })
     }
 
