@@ -24,9 +24,8 @@ export class ServiceDefinitionTreeItem extends vscode.TreeItem {
 
         if(this._serviceDefinition.alias !== null) {
             children.push(new vscode.TreeItem("Alias : " + this._serviceDefinition.alias, vscode.TreeItemCollapsibleState.None))
-        } else {
-            children.push(new vscode.TreeItem("Class : " + this._serviceDefinition.className, vscode.TreeItemCollapsibleState.None))
         }
+        children.push(new vscode.TreeItem("Class : " + this._serviceDefinition.className, vscode.TreeItemCollapsibleState.None))
 
         return children
     }

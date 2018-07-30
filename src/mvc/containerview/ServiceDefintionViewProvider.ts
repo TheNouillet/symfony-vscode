@@ -14,10 +14,12 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
     }
 
     refresh(): void {
-        this._containerStore.refreshServiceDefinitions().then(() => {
-            this._onDidChangeTreeData.fire();
-        }).catch(reason => {
-            vscode.window.showErrorMessage(reason)
+        vscode.window.withProgress({location: vscode.ProgressLocation.Window, title: "Symfony is refreshing..."}, (progress, token) => {
+            return this._containerStore.refreshServiceDefinitions().then(() => {
+                this._onDidChangeTreeData.fire();
+            }).catch(reason => {
+                vscode.window.showErrorMessage(reason)
+            })
         })
     }
 

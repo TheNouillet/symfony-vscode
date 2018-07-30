@@ -22,21 +22,30 @@ export class ConsoleProvider implements ContainerProviderInterface {
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
         let showErrors = this._configuration.get("showConsoleErrors")
         return new Promise((resolve, reject) => {
-            this._getDebugCommand("debug:container").then(infos => {
+            this._getDebugCommand("debug:container --show-private").then(infos => {
                 let result: ServiceDefinition[] = []
+                let collection: Object = {}
                 try {
                     let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
                     let obj = JSON.parse(buffer)
                     if(obj.definitions !== undefined) {
                         Object.keys(obj.definitions).forEach(key => {
-                            result.push(new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
+                            collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
                         })
                     }
                     if(obj.aliases !== undefined) {
                         Object.keys(obj.aliases).forEach(key => {
-                            result.push(new ServiceDefinition(key, null, obj.aliases[key].public, obj.aliases[key].service))
+                            let alias = obj.aliases[key].service
+                            let className = collection[alias] ? collection[alias].className : null
+                            collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
                         })
                     }
+                    Object.keys(collection).forEach(key => {
+                        result.push(collection[key])
+                    });
+                    result = result.filter((service) => {
+                        return service.public == true
+                    })
                     result.sort((a, b) => {
                         if(a.id < b.id) {
                             return -1
