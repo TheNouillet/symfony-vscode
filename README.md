@@ -1,6 +1,6 @@
 # Symfony for VS Code
 
-This extension aims to help developing Symfony2+ projects, by showing services and routes of your current project.
+This extension aims to help developing Symfony2+ projects, by showing services and routes of your current project, and provide autocompletion support with these datas.
 
 ## Features
 
@@ -10,13 +10,15 @@ This extension add a new view, the *Symfony Debug View*, to visualize the status
 * see all services aliases
 * ...
 
+This extension also enable autocompletion in YAML files to reference services.
+
 ## How does it works ?
 
 To detect Symfony projects, this extension rely on `composer.json` files with `symfony/symfony` as one of its dependencies.
 
 The `composer.json` file is supposed to be at the root of your Symfony project.
 
-When the project is detected, it simply uses the `debug:container` and `debug:router` console commands to hydrate the views.
+When the project is detected, it simply uses the `debug:container` and `debug:router` console commands to hydrate the views and autocompletions.
 
 ## Extension Settings
 
@@ -36,7 +38,7 @@ A: You have to override the PHP executable path, and disable the root directory 
 ```json
 {
     "symfony-vscode.detectCwd": false,
-    "symfony-vscode.phpPath": "docker exec -it docker_php_1 /bin/sh -c \"cd /app/www && /usr/bin/php\""
+    "symfony-vscode.phpPath": "docker exec my_container_id /bin/sh -c 'cd /path/to/symfony && /usr/bin/php \"$@\"' -- "
 }
 ```
 
@@ -44,12 +46,13 @@ A: You have to override the PHP executable path, and disable the root directory 
 
 ### 0.0.2
 
+* Added autocomplete of services in YAML files
 * Added the `detectCwd` setting to help with Symfony projects on Docker
 * Added more logging of errors
     * Added the `showConsoleErrors` setting to hide errors from the Symfony console
 * Added progress indicator on the status bar
-* Added class name for services aliases
-* Added autocomplete of services in YAML files
+* [#1](https://github.com/TheNouillet/symfony-vscode/issues/1) Added buttons to the side of TreeViews to re-sync the extension and Symfony.
+* [#3](https://github.com/TheNouillet/symfony-vscode/issues/3) Added class name for services aliases
 
 ### 0.0.1
 
