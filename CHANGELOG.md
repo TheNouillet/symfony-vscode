@@ -3,6 +3,9 @@
 ## 0.0.3
 
 * Added the `enableFileWatching` setting to enable or disable file watching.
+* Added the "Toggle class/id display for services" command to switch between Id and class name display on the services view.
+* Added the "Toggle path/id display for routes" command to switch between Id and paths display on the routes view.
+    * These two commands are available via buttons on the side of the two views.
 
 ## 0.0.2
 
