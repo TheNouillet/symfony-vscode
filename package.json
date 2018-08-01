@@ -2,7 +2,7 @@
     "name": "symfony-vscode",
     "displayName": "Symfony for VSCode",
     "description": "Debug and autocomplete of Symfony container",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "TheNouillet",
     "repository": {
         "url": "https://github.com/TheNouillet/symfony-vscode"
