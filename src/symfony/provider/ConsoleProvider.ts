@@ -69,15 +69,6 @@ export class ConsoleProvider implements ContainerProviderInterface {
                             result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
                         }
                     })
-                    result.sort((a, b) => {
-                        if(a.id < b.id) {
-                            return -1
-                        }
-                        if(a.id > b.id) {
-                            return 1
-                        }
-                        return 0
-                    })
                     resolve(result)
                 } catch(e) {
                     if(showErrors) {

@@ -18,9 +18,11 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitionsView', () => serviceDefinitionViewProvider.refresh());
+    vscode.commands.registerCommand('symfony-vscode.toggleClassDisplay', () => serviceDefinitionViewProvider.toggleClassDisplay());
 
     vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitionsView', () => routeDefinitionViewProvider.refresh());
+    vscode.commands.registerCommand('symfony-vscode.togglePathDisplay', () => routeDefinitionViewProvider.togglePathsDisplay());
 
     if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
         let fileWatchController = new FileWatchController(serviceDefinitionViewProvider, routeDefinitionViewProvider)

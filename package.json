@@ -32,23 +32,33 @@
             "symfonyViewsContainer": [
                 {
                     "id": "routeDefinitionsView",
-                    "name": "Route definitions view"
+                    "name": "Routes definitions view"
                 },
                 {
                     "id": "serviceDefinitionsView",
-                    "name": "Service definitions view"
+                    "name": "Services definitions view"
                 }
             ]
         },
         "commands": [
             {
                 "command": "symfony-vscode.refreshServiceDefinitionsView",
-                "title": "Refresh service definitions view",
+                "title": "Refresh services definitions view",
                 "category": "Symfony"
             },
             {
                 "command": "symfony-vscode.refreshRouteDefinitionsView",
-                "title": "Refresh route definitions view",
+                "title": "Refresh routes definitions view",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.toggleClassDisplay",
+                "title": "Toggle class/id display for services",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.togglePathDisplay",
+                "title": "Toggle path/id display for routes",
                 "category": "Symfony"
             }
         ],
@@ -59,7 +69,15 @@
                     "when": "view == serviceDefinitionsView"
                 },
                 {
+                    "command": "symfony-vscode.toggleClassDisplay",
+                    "when": "view == serviceDefinitionsView"
+                },
+                {
                     "command": "symfony-vscode.refreshRouteDefinitionsView",
+                    "when": "view == routeDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.togglePathDisplay",
                     "when": "view == routeDefinitionsView"
                 }
             ]
