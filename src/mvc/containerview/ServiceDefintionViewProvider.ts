@@ -10,11 +10,16 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
 
     constructor(containerStore: ContainerStore) {
         this._containerStore = containerStore
+        this.refresh()
     }
 
     refresh(): void {
-        this._containerStore.refreshServiceDefinitions().then(() => {
-            this._onDidChangeTreeData.fire();
+        vscode.window.withProgress({location: vscode.ProgressLocation.Window, title: "Symfony is refreshing..."}, (progress, token) => {
+            return this._containerStore.refreshServiceDefinitions().then(() => {
+                this._onDidChangeTreeData.fire();
+            }).catch(reason => {
+                vscode.window.showErrorMessage(reason)
+            })
         })
     }
 
@@ -26,11 +31,23 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
         return new Promise(resolve => {
             if (!element) {
                 let serviceDefinitions: ServiceDefinition[] = this._containerStore.serviceDefinitionList
-                let result: vscode.TreeItem[] = []
+                let result: ServiceDefinitionTreeItem[] = []
 
                 serviceDefinitions.forEach(serviceDefinition => {
                     result.push(new ServiceDefinitionTreeItem(serviceDefinition))
                 });
+                result = result.filter((treeItem) => {
+                    return treeItem.serviceDefinition.public == true
+                })
+                result.sort((a, b) => {
+                    if(a.serviceDefinition.id < b.serviceDefinition.id) {
+                        return -1
+                    }
+                    if(a.serviceDefinition.id > b.serviceDefinition.id) {
+                        return 1
+                    }
+                    return 0
+                })
 
                 resolve(result)
             } else {

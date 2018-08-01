@@ -1,5 +1,5 @@
-import { ServiceDefintionViewProvider } from "./ServiceDefintionViewProvider";
-import { RouteDefintionViewProvider } from "./RouteDefinitionViewProvider";
+import { ServiceDefintionViewProvider } from "./containerview/ServiceDefintionViewProvider";
+import { RouteDefintionViewProvider } from "./containerview/RouteDefinitionViewProvider";
 import * as vscode from "vscode";
 
 export class FileWatchController {

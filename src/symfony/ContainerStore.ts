@@ -9,24 +9,6 @@ export class ContainerStore {
     private _serviceDefinitionStore: ServiceDefinition[] = []
     private _routeDefinitionStore: RouteDefinition[] = []
 
-    constructor() {
-        this.refreshAll()
-    }
-
-    refreshAll(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this.refreshServiceDefinitions()
-                .then(() => {
-                    this.refreshRouteDefinitions()
-                        .then(() => {
-                            resolve()
-                        })
-                        .catch(reason => reject(reason))
-                })
-                .catch(reason => reject(reason))
-        })
-    }
-
     refreshServiceDefinitions(): Promise<void> {
         return new Promise((resolve, reject) => {
             this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
