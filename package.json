@@ -91,6 +91,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "If false, the extension doesn't show error messages caused by compilation errors."
+                },
+                "symfony-vscode.enableFileWatching": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If false, the extension refresh automatically when a YAML file is modified"
                 }
             }
         }

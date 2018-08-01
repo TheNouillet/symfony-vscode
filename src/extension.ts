@@ -22,10 +22,12 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitionsView', () => routeDefinitionViewProvider.refresh());
 
-    let fileWatchController = new FileWatchController(serviceDefinitionViewProvider, routeDefinitionViewProvider)
-    let autocompleteController = new AutocompleteController(containerStore)
+    if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
+        let fileWatchController = new FileWatchController(serviceDefinitionViewProvider, routeDefinitionViewProvider)
+        context.subscriptions.push(fileWatchController)
+    }
 
-    context.subscriptions.push(fileWatchController)
+    let autocompleteController = new AutocompleteController(containerStore)
     context.subscriptions.push(autocompleteController)
 }
 
