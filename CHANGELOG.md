@@ -2,6 +2,7 @@
 
 ## 0.0.3
 
+* Added aucompletion of public services in PHP files
 * Added the `enableFileWatching` setting to enable or disable file watching.
 * Added the "Toggle class/id display for services" command to switch between Id and class name display on the services view.
 * Added the "Toggle path/id display for routes" command to switch between Id and paths display on the routes view.
@@ -9,7 +10,7 @@
 
 ## 0.0.2
 
-* Added autocomplete of services in YAML files
+* Added autocompletion of services in YAML files
 * Added the `detectCwd` setting to help with Symfony projects on Docker
 * Added more logging of errors
     * Added the `showConsoleErrors` setting to hide errors from the Symfony console
