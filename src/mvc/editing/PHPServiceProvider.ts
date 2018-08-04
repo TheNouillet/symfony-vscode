@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { ContainerStore } from "../../symfony/ContainerStore";
+import { PHPServiceCompletionItem } from "./PHPServiceCompletionItem";
 
 export class PHPServiceProvider implements vscode.CompletionItemProvider {
 
@@ -13,13 +14,8 @@ export class PHPServiceProvider implements vscode.CompletionItemProvider {
         let result: vscode.CompletionItem[] = []
         let serviceDefinitions = this._containerStore.serviceDefinitionList
         serviceDefinitions.forEach(serviceDefinition => {
-            if(serviceDefinition.public && !serviceDefinition.isInstanceOf()) {
-                let item = new vscode.CompletionItem(serviceDefinition.id, vscode.CompletionItemKind.Reference)
-                item.detail = "Of class " + serviceDefinition.className
-                if(serviceDefinition.id.match(/^(?:\\{1,2}\w+|\w+\\{1,2})(?:\w+\\{0,2}\w+)+$/)) {
-                    // If the service Id is a class, we append ::class
-                    item.insertText = item.label + "::class"
-                }
+            if(serviceDefinition.public) {
+                let item = new PHPServiceCompletionItem(serviceDefinition)
                 result.push(item)
             }
         });

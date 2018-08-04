@@ -41,7 +41,9 @@ export class ConsoleProvider implements ContainerProviderInterface {
                         })
                     }
                     Object.keys(collection).forEach(key => {
-                        result.push(collection[key])
+                        if(!this._matchFilters(collection[key].id, collection[key].className)) {
+                            result.push(collection[key])
+                        }
                     });
                     resolve(result)
                 } catch (e) {
@@ -113,5 +115,17 @@ export class ConsoleProvider implements ContainerProviderInterface {
 
     private _getPhpExecutablePath(): string {
         return this._configuration.get("phpPath")
+    }
+
+    private _matchFilters(serviceId: string, serviceClassName: string): boolean {
+        let filters: object = this._configuration.get("servicesFilters")
+        return Object.keys(filters).some(filter => {
+            if(filters[filter] === "id" && serviceId != null && serviceId.match(new RegExp(filter))) {
+                return true
+            } else if(filters[filter] === "class" && serviceClassName != null &&  serviceClassName.match(new RegExp(filter))) {
+                return true
+            }
+            return false
+        })
     }
 }

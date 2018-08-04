@@ -42,9 +42,6 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
                 serviceDefinitions.forEach(serviceDefinition => {
                     result.push(new ServiceDefinitionTreeItem(serviceDefinition, this._displayClasses))
                 });
-                result = result.filter((treeItem) => {
-                    return !treeItem.serviceDefinition.isInstanceOf()
-                })
                 result.sort((a, b) => {
                     if(a.label < b.label) {
                         return -1

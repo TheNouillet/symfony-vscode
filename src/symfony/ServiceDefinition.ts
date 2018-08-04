@@ -10,8 +10,4 @@ export class ServiceDefinition {
         this.public = isPublic
         this.alias = alias
     }
-
-    public isInstanceOf(): boolean {
-        return this.id.match(/instanceof\./) !== null
-    }
 }

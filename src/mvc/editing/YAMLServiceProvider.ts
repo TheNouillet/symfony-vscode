@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { ContainerStore } from "../../symfony/ContainerStore";
+import { YAMLServiceCompletionItem } from "./YAMLServiceCompletionItem";
 
 export class YAMLServiceProvider implements vscode.CompletionItemProvider {
 
@@ -13,11 +14,8 @@ export class YAMLServiceProvider implements vscode.CompletionItemProvider {
         let result: vscode.CompletionItem[] = []
         let serviceDefinitions = this._containerStore.serviceDefinitionList
         serviceDefinitions.forEach(serviceDefinition => {
-            if(!serviceDefinition.isInstanceOf()) {
-                let item = new vscode.CompletionItem(serviceDefinition.id, vscode.CompletionItemKind.Reference)
-                item.detail = "Of class " + serviceDefinition.className
-                result.push(item)
-            }
+            let item = new YAMLServiceCompletionItem(serviceDefinition)
+            result.push(item)
         });
         return result
     }
