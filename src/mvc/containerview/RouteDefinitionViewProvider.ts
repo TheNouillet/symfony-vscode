@@ -15,10 +15,12 @@ export class RouteDefintionViewProvider implements vscode.TreeDataProvider<vscod
     }
 
     refresh(): void {
-        this._containerStore.refreshRouteDefinitions().then(() => {
-            this._onDidChangeTreeData.fire();
-        }).catch(reason => {
-            vscode.window.showErrorMessage(reason)
+        vscode.window.withProgress({location: vscode.ProgressLocation.Window, title: "Symfony is refreshing..."}, (progress, token) => {
+            return this._containerStore.refreshRouteDefinitions().then(() => {
+                this._onDidChangeTreeData.fire()
+            }).catch(reason => {
+                vscode.window.showErrorMessage(reason)
+            })
         })
     }
 
