@@ -3,6 +3,7 @@
 ## 0.0.3
 
 * Added aucompletion of public services in PHP files
+* Added class name on hover on a known service id in YAML and PHP files.
 * Added the `enableFileWatching` setting to enable or disable file watching.
 * Added the `servicesFilters` to improve autocompletion pertinence.
 * Added the "Toggle class/id display for services" command to switch between Id and class name display on the services view.

@@ -119,7 +119,7 @@
                     "type": "object",
                     "default": {
                         "[a-f0-9]{64}_[0-9]+": "id",
-                        "[0-9]+_.*~[a-z0-9.]{7}": "id",
+                        "~": "id",
                         "instanceof\\.": "id"
                     },
                     "description": "Filter out services entirely when they match one of the given regexs. Useful for auto-generated services. Use \"id\" to filter out services by id, or \"class\" by extended class name"
