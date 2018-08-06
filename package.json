@@ -31,6 +31,10 @@
         "views": {
             "symfonyViewsContainer": [
                 {
+                    "id": "parametersView",
+                    "name": "Parameters view"
+                },
+                {
                     "id": "routeDefinitionsView",
                     "name": "Routes definitions view"
                 },
@@ -49,6 +53,11 @@
             {
                 "command": "symfony-vscode.refreshRouteDefinitionsView",
                 "title": "Refresh routes definitions view",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.refreshParametersView",
+                "title": "Refresh parameters view",
                 "category": "Symfony"
             },
             {
@@ -79,6 +88,10 @@
                 {
                     "command": "symfony-vscode.togglePathDisplay",
                     "when": "view == routeDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.refreshParametersView",
+                    "when": "view == parametersView"
                 }
             ]
         },

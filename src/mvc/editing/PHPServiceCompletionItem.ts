@@ -10,7 +10,7 @@ export class PHPServiceCompletionItem extends vscode.CompletionItem {
     }
 
     public get insertText(): string {
-        if(!this.isServiceIdAClassName()) {
+        if(!this._serviceDefinition.isServiceIdAClassName()) {
             return this._serviceDefinition.id
         } else {
             return this._serviceDefinition.className + "::class"
@@ -18,10 +18,10 @@ export class PHPServiceCompletionItem extends vscode.CompletionItem {
     }
 
     public get detail(): string {
-        return "Of class " + this._serviceDefinition.className
+        return this._serviceDefinition.id
     }
 
-    public isServiceIdAClassName(): boolean {
-        return this._serviceDefinition.id === this._serviceDefinition.className
+    public get documentation(): string {
+        return "Of class " + this._serviceDefinition.className
     }
 }

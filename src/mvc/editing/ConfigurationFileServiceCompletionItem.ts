@@ -1,7 +1,7 @@
 import * as vscode from "vscode"
 import { ServiceDefinition } from "../../symfony/ServiceDefinition";
 
-export class YAMLServiceCompletionItem extends vscode.CompletionItem {
+export class ConfigurationFileServiceCompletionItem extends vscode.CompletionItem {
     private _serviceDefinition: ServiceDefinition
 
     constructor(serviceDefinition: ServiceDefinition) {
@@ -9,7 +9,11 @@ export class YAMLServiceCompletionItem extends vscode.CompletionItem {
         this._serviceDefinition = serviceDefinition
     }
 
-    public get detail() {
+    public get detail(): string {
+        return this._serviceDefinition.id
+    }
+
+    public get documentation(): string {
         return "Of class " + this._serviceDefinition.className
     }
 }

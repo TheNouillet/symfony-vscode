@@ -1,6 +1,7 @@
 import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
 import { RouteDefinition } from "../RouteDefinition";
+import { Parameter } from "../Parameter";
 
 export class DummyProvider implements ContainerProviderInterface {
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
@@ -28,6 +29,12 @@ export class DummyProvider implements ContainerProviderInterface {
             result.push(new RouteDefinition('fos_js_routing_js', '/js/routing.{_format}', "GET", "fos_js_routing.controller:indexAction"))
     
             resolve(result)
+        })
+    }
+
+    provideParameters(): Promise<Parameter[]> {
+        return new Promise((resolve, reject) => {
+            resolve([])
         })
     }
 }

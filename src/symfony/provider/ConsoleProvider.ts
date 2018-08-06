@@ -6,6 +6,7 @@ import { ServiceDefinition } from "../ServiceDefinition";
 import { execSync, ExecSyncOptions } from "child_process";
 import { ComposerJSON } from "../ComposerJSON";
 import { RouteDefinition } from "../RouteDefinition";
+import { Parameter } from "../Parameter";
 
 class CommandOptions implements ExecSyncOptions {
     cwd: string = ""
@@ -70,6 +71,29 @@ export class ConsoleProvider implements ContainerProviderInterface {
                         if(!(!showAsseticRoutes && key.match(/^_assetic_/))) {
                             result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
                         }
+                    })
+                    resolve(result)
+                } catch(e) {
+                    if(showErrors) {
+                        reject(e.message)
+                    } else {
+                        resolve([])
+                    }
+                }
+            }).catch(reason => reject(reason))
+        })
+    }
+
+    provideParameters(): Promise<Parameter[]> {
+        let showErrors = this._configuration.get("showConsoleErrors")
+        return new Promise((resolve, reject) => {
+            this._getDebugCommand("debug:container --parameters").then(infos => {
+                let result: Parameter[] = []
+                try {
+                    let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
+                    let obj = JSON.parse(buffer)
+                    Object.keys(obj).forEach(key => {
+                        result.push(new Parameter(key, obj[key]))
                     })
                     resolve(result)
                 } catch(e) {
