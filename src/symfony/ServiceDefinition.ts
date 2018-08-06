@@ -10,4 +10,8 @@ export class ServiceDefinition {
         this.public = isPublic
         this.alias = alias
     }
+
+    public isServiceIdAClassName(): boolean {
+        return this.id.match(/^(?:\\{1,2}\w+|\w+\\{1,2})(?:\w+\\{0,2}\w+)+$/) !== null
+    }
 }

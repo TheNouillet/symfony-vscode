@@ -2,7 +2,7 @@
     "name": "symfony-vscode",
     "displayName": "Symfony for VSCode",
     "description": "Debug and autocomplete of Symfony container",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "TheNouillet",
     "repository": {
         "url": "https://github.com/TheNouillet/symfony-vscode"
@@ -31,24 +31,43 @@
         "views": {
             "symfonyViewsContainer": [
                 {
+                    "id": "parametersView",
+                    "name": "Parameters view"
+                },
+                {
                     "id": "routeDefinitionsView",
-                    "name": "Route definitions view"
+                    "name": "Routes definitions view"
                 },
                 {
                     "id": "serviceDefinitionsView",
-                    "name": "Service definitions view"
+                    "name": "Services definitions view"
                 }
             ]
         },
         "commands": [
             {
                 "command": "symfony-vscode.refreshServiceDefinitionsView",
-                "title": "Refresh service definitions view",
+                "title": "Refresh services definitions view",
                 "category": "Symfony"
             },
             {
                 "command": "symfony-vscode.refreshRouteDefinitionsView",
-                "title": "Refresh route definitions view",
+                "title": "Refresh routes definitions view",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.refreshParametersView",
+                "title": "Refresh parameters view",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.toggleClassDisplay",
+                "title": "Toggle class/id display for services",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.togglePathDisplay",
+                "title": "Toggle path/id display for routes",
                 "category": "Symfony"
             }
         ],
@@ -59,8 +78,20 @@
                     "when": "view == serviceDefinitionsView"
                 },
                 {
+                    "command": "symfony-vscode.toggleClassDisplay",
+                    "when": "view == serviceDefinitionsView"
+                },
+                {
                     "command": "symfony-vscode.refreshRouteDefinitionsView",
                     "when": "view == routeDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.togglePathDisplay",
+                    "when": "view == routeDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.refreshParametersView",
+                    "when": "view == parametersView"
                 }
             ]
         },
@@ -91,6 +122,20 @@
                     "type": "boolean",
                     "default": true,
                     "description": "If false, the extension doesn't show error messages caused by compilation errors."
+                },
+                "symfony-vscode.enableFileWatching": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If false, the extension refresh automatically when a YAML file is modified"
+                },
+                "symfony-vscode.servicesFilters": {
+                    "type": "object",
+                    "default": {
+                        "[a-f0-9]{64}_[0-9]+": "id",
+                        "~": "id",
+                        "instanceof\\.": "id"
+                    },
+                    "description": "Filter out services entirely when they match one of the given regexs. Useful for auto-generated services. Use \"id\" to filter out services by id, or \"class\" by extended class name"
                 }
             }
         }

@@ -6,6 +6,7 @@ import { ServiceDefinition } from "../ServiceDefinition";
 import { execSync, ExecSyncOptions } from "child_process";
 import { ComposerJSON } from "../ComposerJSON";
 import { RouteDefinition } from "../RouteDefinition";
+import { Parameter } from "../Parameter";
 
 class CommandOptions implements ExecSyncOptions {
     cwd: string = ""
@@ -41,7 +42,9 @@ export class ConsoleProvider implements ContainerProviderInterface {
                         })
                     }
                     Object.keys(collection).forEach(key => {
-                        result.push(collection[key])
+                        if(!this._matchFilters(collection[key].id, collection[key].className)) {
+                            result.push(collection[key])
+                        }
                     });
                     resolve(result)
                 } catch (e) {
@@ -69,14 +72,28 @@ export class ConsoleProvider implements ContainerProviderInterface {
                             result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
                         }
                     })
-                    result.sort((a, b) => {
-                        if(a.id < b.id) {
-                            return -1
-                        }
-                        if(a.id > b.id) {
-                            return 1
-                        }
-                        return 0
+                    resolve(result)
+                } catch(e) {
+                    if(showErrors) {
+                        reject(e.message)
+                    } else {
+                        resolve([])
+                    }
+                }
+            }).catch(reason => reject(reason))
+        })
+    }
+
+    provideParameters(): Promise<Parameter[]> {
+        let showErrors = this._configuration.get("showConsoleErrors")
+        return new Promise((resolve, reject) => {
+            this._getDebugCommand("debug:container --parameters").then(infos => {
+                let result: Parameter[] = []
+                try {
+                    let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
+                    let obj = JSON.parse(buffer)
+                    Object.keys(obj).forEach(key => {
+                        result.push(new Parameter(key, obj[key]))
                     })
                     resolve(result)
                 } catch(e) {
@@ -122,5 +139,17 @@ export class ConsoleProvider implements ContainerProviderInterface {
 
     private _getPhpExecutablePath(): string {
         return this._configuration.get("phpPath")
+    }
+
+    private _matchFilters(serviceId: string, serviceClassName: string): boolean {
+        let filters: object = this._configuration.get("servicesFilters")
+        return Object.keys(filters).some(filter => {
+            if(filters[filter] === "id" && serviceId != null && serviceId.match(new RegExp(filter))) {
+                return true
+            } else if(filters[filter] === "class" && serviceClassName != null &&  serviceClassName.match(new RegExp(filter))) {
+                return true
+            }
+            return false
+        })
     }
 }

@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { ContainerStore } from "../../symfony/ContainerStore";
+import { PHPServiceCompletionItem } from "./PHPServiceCompletionItem";
 
-export class YAMLServiceProvider implements vscode.CompletionItemProvider {
+export class PHPServiceProvider implements vscode.CompletionItemProvider {
 
     private _containerStore: ContainerStore
 
@@ -13,9 +14,8 @@ export class YAMLServiceProvider implements vscode.CompletionItemProvider {
         let result: vscode.CompletionItem[] = []
         let serviceDefinitions = this._containerStore.serviceDefinitionList
         serviceDefinitions.forEach(serviceDefinition => {
-            if(!serviceDefinition.id.match(/~/) && !serviceDefinition.id.match(/abstract\.instanceof/)) {
-                let item = new vscode.CompletionItem(serviceDefinition.id, vscode.CompletionItemKind.Reference)
-                item.detail = "Of class " + serviceDefinition.className
+            if(serviceDefinition.public) {
+                let item = new PHPServiceCompletionItem(serviceDefinition)
                 result.push(item)
             }
         });

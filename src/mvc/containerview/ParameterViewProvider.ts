@@ -1,13 +1,12 @@
 import * as vscode from "vscode"
 import { ContainerStore } from "../../symfony/ContainerStore";
-import { RouteDefinition } from "../../symfony/RouteDefinition";
-import { RouteDefinitionTreeItem } from "./RouteDefinitionTreeItem";
+import { Parameter } from "../../symfony/Parameter";
+import { ParameterTreeItem } from "./ParameterTreeItem";
 
-export class RouteDefintionViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+export class ParameterViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
     private _containerStore: ContainerStore
-    private _displayPaths: boolean = false
 
     constructor(containerStore: ContainerStore) {
         this._containerStore = containerStore
@@ -16,17 +15,12 @@ export class RouteDefintionViewProvider implements vscode.TreeDataProvider<vscod
 
     refresh(): void {
         vscode.window.withProgress({location: vscode.ProgressLocation.Window, title: "Symfony is refreshing..."}, (progress, token) => {
-            return this._containerStore.refreshRouteDefinitions().then(() => {
+            return this._containerStore.refreshParameters().then(() => {
                 this._onDidChangeTreeData.fire()
             }).catch(reason => {
                 vscode.window.showErrorMessage(reason)
             })
         })
-    }
-
-    togglePathsDisplay(): void {
-        this._displayPaths = !this._displayPaths
-        this._onDidChangeTreeData.fire();
     }
 
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
@@ -36,11 +30,11 @@ export class RouteDefintionViewProvider implements vscode.TreeDataProvider<vscod
     getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
         return new Promise(resolve => {
             if (!element) {
-                let routeDefinitions: RouteDefinition[] = this._containerStore.routeDefinitionList
+                let parameters: Parameter[] = this._containerStore.parameterList
                 let result: vscode.TreeItem[] = []
 
-                routeDefinitions.forEach(routeDefinition => {
-                    result.push(new RouteDefinitionTreeItem(routeDefinition, this._displayPaths))
+                parameters.forEach(parameter => {
+                    result.push(new ParameterTreeItem(parameter))
                 });
                 result.sort((a, b) => {
                     if(a.label < b.label) {
@@ -53,7 +47,7 @@ export class RouteDefintionViewProvider implements vscode.TreeDataProvider<vscod
                 })
                 resolve(result)
             } else {
-                if(element instanceof RouteDefinitionTreeItem) {
+                if(element instanceof ParameterTreeItem) {
                     resolve(element.childrenItems)
                 } else {
                     resolve([])

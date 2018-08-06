@@ -7,6 +7,7 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
     private _containerStore: ContainerStore
+    private _displayClasses: boolean = false
 
     constructor(containerStore: ContainerStore) {
         this._containerStore = containerStore
@@ -16,11 +17,16 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
     refresh(): void {
         vscode.window.withProgress({location: vscode.ProgressLocation.Window, title: "Symfony is refreshing..."}, (progress, token) => {
             return this._containerStore.refreshServiceDefinitions().then(() => {
-                this._onDidChangeTreeData.fire();
+                this._onDidChangeTreeData.fire()
             }).catch(reason => {
                 vscode.window.showErrorMessage(reason)
             })
         })
+    }
+
+    toggleClassDisplay(): void {
+        this._displayClasses = !this._displayClasses
+        this._onDidChangeTreeData.fire()
     }
 
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
@@ -34,16 +40,13 @@ export class ServiceDefintionViewProvider implements vscode.TreeDataProvider<vsc
                 let result: ServiceDefinitionTreeItem[] = []
 
                 serviceDefinitions.forEach(serviceDefinition => {
-                    result.push(new ServiceDefinitionTreeItem(serviceDefinition))
+                    result.push(new ServiceDefinitionTreeItem(serviceDefinition, this._displayClasses))
                 });
-                result = result.filter((treeItem) => {
-                    return treeItem.serviceDefinition.public == true
-                })
                 result.sort((a, b) => {
-                    if(a.serviceDefinition.id < b.serviceDefinition.id) {
+                    if(a.label < b.label) {
                         return -1
                     }
-                    if(a.serviceDefinition.id > b.serviceDefinition.id) {
+                    if(a.label > b.label) {
                         return 1
                     }
                     return 0
