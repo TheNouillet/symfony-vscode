@@ -3,6 +3,7 @@
 ## 0.0.3
 
 * Added aucompletion of public services in PHP files
+* Added the parameter view to display parameters of the Symfony container.
 * Added aucompletion of parameters in YAML files
 * Added class name on hover on a known service id in YAML and PHP files.
 * Added the `enableFileWatching` setting to enable or disable file watching.
