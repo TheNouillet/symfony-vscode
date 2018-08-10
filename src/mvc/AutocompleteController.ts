@@ -2,7 +2,7 @@ import { ContainerStore } from "../symfony/ContainerStore";
 import * as vscode from "vscode"
 import { ConfigurationFileProvider } from "./editing/ConfigurationFileProvider";
 import { PHPServiceProvider } from "./editing/PHPServiceProvider";
-import { ServiceHoverProvider } from "./editing/ServiceHoverProvider";
+import { ContainerHoverProvider } from "./editing/ContainerHoverProvider";
 
 export class AutocompleteController {
     private _disposable: vscode.Disposable
@@ -10,7 +10,7 @@ export class AutocompleteController {
     constructor(containerStore: ContainerStore) {
         let configurationFileProvider = new ConfigurationFileProvider(containerStore)
         let phpServiceProvider = new PHPServiceProvider(containerStore)
-        let hoverProvider = new ServiceHoverProvider(containerStore)
+        let hoverProvider = new ContainerHoverProvider(containerStore)
 
         let disposables: vscode.Disposable[] = []
         disposables.push(vscode.languages.registerCompletionItemProvider({ scheme: 'file', language: 'yaml' }, configurationFileProvider, "@"))
