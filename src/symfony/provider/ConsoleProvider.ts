@@ -42,7 +42,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
                         })
                     }
                     Object.keys(collection).forEach(key => {
-                        if(!this._matchFilters(collection[key].id, collection[key].className)) {
+                        if(!this._matchServicesFilters(collection[key].id, collection[key].className)) {
                             result.push(collection[key])
                         }
                     });
@@ -60,7 +60,6 @@ export class ConsoleProvider implements ContainerProviderInterface {
 
     provideRouteDefinitions(): Promise<RouteDefinition[]> {
         let showErrors = this._configuration.get("showConsoleErrors")
-        let showAsseticRoutes = this._configuration.get("showAsseticRoutes")
         return new Promise((resolve, reject) => {
             this._getDebugCommand("debug:router").then(infos => {
                 let result: RouteDefinition[] = []
@@ -68,7 +67,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
                     let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
                     let obj = JSON.parse(buffer)
                     Object.keys(obj).forEach(key => {
-                        if(!(!showAsseticRoutes && key.match(/^_assetic_/))) {
+                        if(!this._matchRoutesFilters(key, obj[key].path)) {
                             result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
                         }
                     })
@@ -141,12 +140,24 @@ export class ConsoleProvider implements ContainerProviderInterface {
         return this._configuration.get("phpPath")
     }
 
-    private _matchFilters(serviceId: string, serviceClassName: string): boolean {
+    private _matchServicesFilters(serviceId: string, serviceClassName: string): boolean {
         let filters: object = this._configuration.get("servicesFilters")
         return Object.keys(filters).some(filter => {
             if(filters[filter] === "id" && serviceId != null && serviceId.match(new RegExp(filter))) {
                 return true
             } else if(filters[filter] === "class" && serviceClassName != null &&  serviceClassName.match(new RegExp(filter))) {
+                return true
+            }
+            return false
+        })
+    }
+
+    private _matchRoutesFilters(routeId: string, routePath: string): boolean {
+        let filters: object = this._configuration.get("routesFilters")
+        return Object.keys(filters).some(filter => {
+            if(filters[filter] === "id" && routeId != null && routeId.match(new RegExp(filter))) {
+                return true
+            } else if(filters[filter] === "path" && routePath != null &&  routePath.match(new RegExp(filter))) {
                 return true
             }
             return false
