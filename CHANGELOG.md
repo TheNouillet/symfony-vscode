@@ -5,6 +5,7 @@
 * Added the `parametersFilters` setting to filter out parameters, such as classes.
 * Added the `routesFilters` setting to filter out routes, such as Assetic routes.
     * Let know in the repository issues if default filters aren't pertinent enough ! I made them according to my work habbits, but each project is different.
+* Errors messages now display only once when refreshing services, routes and parameters (i.e. at extension startup or configuration file modification)
 
 ## 0.0.3 [08-06-2018]
 
