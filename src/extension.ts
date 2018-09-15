@@ -18,24 +18,28 @@ export function activate(context: vscode.ExtensionContext) {
     const routeDefinitionViewProvider = new RouteDefintionViewProvider(containerStore)
     const parameterViewProvider = new ParameterViewProvider(containerStore)
 
+    vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => containerStore.refreshAll())
+
     vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
-    vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitionsView', () => serviceDefinitionViewProvider.refresh())
+    vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitions', () => containerStore.refreshServiceDefinitions())
     vscode.commands.registerCommand('symfony-vscode.toggleClassDisplay', () => serviceDefinitionViewProvider.toggleClassDisplay())
 
     vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
-    vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitionsView', () => routeDefinitionViewProvider.refresh())
+    vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitions', () => containerStore.refreshRouteDefinitions())
     vscode.commands.registerCommand('symfony-vscode.togglePathDisplay', () => routeDefinitionViewProvider.togglePathsDisplay())
 
     vscode.window.registerTreeDataProvider("parametersView", parameterViewProvider)
-    vscode.commands.registerCommand('symfony-vscode.refreshParametersView', () => parameterViewProvider.refresh())
+    vscode.commands.registerCommand('symfony-vscode.refreshParameters', () => containerStore.refreshParameters())
 
     if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
-        let fileWatchController = new FileWatchController(serviceDefinitionViewProvider, routeDefinitionViewProvider, parameterViewProvider)
+        let fileWatchController = new FileWatchController(containerStore)
         context.subscriptions.push(fileWatchController)
     }
 
     let autocompleteController = new AutocompleteController(containerStore)
     context.subscriptions.push(autocompleteController)
+
+    containerStore.refreshAll()
 }
 
 // this method is called when your extension is deactivated

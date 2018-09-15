@@ -2,25 +2,23 @@ import * as vscode from "vscode"
 import { ContainerStore } from "../../symfony/ContainerStore";
 import { Parameter } from "../../symfony/Parameter";
 import { ParameterTreeItem } from "./ParameterTreeItem";
+import { AbstractContainerStoreListener } from "../../symfony/AbstractContainerStoreListener";
 
-export class ParameterViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+export class ParameterViewProvider extends AbstractContainerStoreListener implements vscode.TreeDataProvider<vscode.TreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
     private _containerStore: ContainerStore
+    private _parameters: Parameter[] = []
 
     constructor(containerStore: ContainerStore) {
+        super()
         this._containerStore = containerStore
-        this.refresh()
+        this._containerStore.subscribeListerner(this)
     }
 
-    refresh(): void {
-        vscode.window.withProgress({location: vscode.ProgressLocation.Window, title: "Symfony is refreshing..."}, (progress, token) => {
-            return this._containerStore.refreshParameters().then(() => {
-                this._onDidChangeTreeData.fire()
-            }).catch(reason => {
-                vscode.window.showErrorMessage(reason)
-            })
-        })
+    onParametersChanges(parameters: Parameter[]) {
+        this._parameters = parameters
+        this._onDidChangeTreeData.fire()
     }
 
     getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
@@ -29,11 +27,10 @@ export class ParameterViewProvider implements vscode.TreeDataProvider<vscode.Tre
 
     getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
         return new Promise(resolve => {
-            if (!element) {
-                let parameters: Parameter[] = this._containerStore.parameterList
+            if (!element && this._parameters.length > 0) {
                 let result: vscode.TreeItem[] = []
 
-                parameters.forEach(parameter => {
+                this._parameters.forEach(parameter => {
                     result.push(new ParameterTreeItem(parameter))
                 });
                 result.sort((a, b) => {

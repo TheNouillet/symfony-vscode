@@ -46,18 +46,23 @@
         },
         "commands": [
             {
-                "command": "symfony-vscode.refreshServiceDefinitionsView",
-                "title": "Refresh services definitions view",
+                "command": "symfony-vscode.refreshServiceDefinitions",
+                "title": "Refresh container services definitions",
                 "category": "Symfony"
             },
             {
-                "command": "symfony-vscode.refreshRouteDefinitionsView",
-                "title": "Refresh routes definitions view",
+                "command": "symfony-vscode.refreshRouteDefinitions",
+                "title": "Refresh container routes definitions",
                 "category": "Symfony"
             },
             {
-                "command": "symfony-vscode.refreshParametersView",
-                "title": "Refresh parameters view",
+                "command": "symfony-vscode.refreshParameters",
+                "title": "Refresh container parameters",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.refreshContainer",
+                "title": "Refresh the entire container",
                 "category": "Symfony"
             },
             {
@@ -74,7 +79,7 @@
         "menus": {
             "view/title": [
                 {
-                    "command": "symfony-vscode.refreshServiceDefinitionsView",
+                    "command": "symfony-vscode.refreshServiceDefinitions",
                     "when": "view == serviceDefinitionsView"
                 },
                 {
@@ -82,7 +87,7 @@
                     "when": "view == serviceDefinitionsView"
                 },
                 {
-                    "command": "symfony-vscode.refreshRouteDefinitionsView",
+                    "command": "symfony-vscode.refreshRouteDefinitions",
                     "when": "view == routeDefinitionsView"
                 },
                 {
@@ -90,7 +95,7 @@
                     "when": "view == routeDefinitionsView"
                 },
                 {
-                    "command": "symfony-vscode.refreshParametersView",
+                    "command": "symfony-vscode.refreshParameters",
                     "when": "view == parametersView"
                 }
             ]
