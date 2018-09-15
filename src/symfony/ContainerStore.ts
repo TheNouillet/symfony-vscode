@@ -1,3 +1,4 @@
+import * as vscode from "vscode"
 import { ServiceDefinition } from "./ServiceDefinition";
 import { ContainerProviderInterface } from "./provider/ContainerProviderInterface";
 import { ConsoleProvider } from "./provider/ConsoleProvider";
@@ -13,68 +14,85 @@ export class ContainerStore {
     private _parameterStore: Parameter[] = []
     private _listeners: AbstractContainerStoreListener[] = []
 
-    refreshAll(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
+    private static SERVICES_FETCH_MESSAGE = "Fetching Symfony services definition..."
+    private static ROUTES_FETCH_MESSAGE = "Fetching Symfony routes definition..."
+    private static PARAMETERS_FETCH_MESSAGE = "Fetching Symfony parameters..."
+
+    refreshAll(): void {
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.SERVICES_FETCH_MESSAGE }, (progress, token) => {
+            return this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
                 this._serviceDefinitionStore = servicesDefinitions
                 this._listeners.forEach(listerner => {
                     listerner.onServicesChanges(servicesDefinitions)
                 });
-                this._containerProvider.provideRouteDefinitions().then(routeDefinitions => {
-                    this._routeDefinitionStore = routeDefinitions
-                    this._listeners.forEach(listerner => {
-                        listerner.onRoutesChanges(routeDefinitions)
-                    });
-                    this._containerProvider.provideParameters().then(parameters => {
-                        this._parameterStore = parameters
+
+                vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.ROUTES_FETCH_MESSAGE }, (progress, token) => {
+                    return this._containerProvider.provideRouteDefinitions().then(routeDefinitions => {
+                        this._routeDefinitionStore = routeDefinitions
                         this._listeners.forEach(listerner => {
-                            listerner.onParametersChanges(parameters)
+                            listerner.onRoutesChanges(routeDefinitions)
                         });
-                        resolve()
-                    }).catch(reason => reject(reason))
-                }).catch(reason => reject(reason))
-            }).catch(reason => reject(reason))
+
+                        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.PARAMETERS_FETCH_MESSAGE }, (progress, token) => {
+                            return this._containerProvider.provideParameters().then(parameters => {
+                                this._parameterStore = parameters
+                                this._listeners.forEach(listerner => {
+                                    listerner.onParametersChanges(parameters)
+                                });
+                            }).catch(reason => {
+                                vscode.window.showErrorMessage(reason)
+                            })
+                        })
+                    }).catch(reason => {
+                        vscode.window.showErrorMessage(reason)
+                    })
+                })
+            }).catch(reason => {
+                vscode.window.showErrorMessage(reason)
+            })
         })
     }
 
-    refreshServiceDefinitions(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
+    refreshServiceDefinitions(): void {
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.SERVICES_FETCH_MESSAGE }, (progress, token) => {
+            return this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
                 this._serviceDefinitionStore = servicesDefinitions
                 this._listeners.forEach(listener => {
                     listener.onServicesChanges(servicesDefinitions)
                 });
-                resolve()
-            }).catch(reason => reject(reason))
+            }).catch(reason => {
+                vscode.window.showErrorMessage(reason)
+            })
         })
     }
 
-    refreshRouteDefinitions(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this._containerProvider.provideRouteDefinitions().then(routeDefinitions => {
+    refreshRouteDefinitions(): void {
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.ROUTES_FETCH_MESSAGE }, (progress, token) => {
+            return this._containerProvider.provideRouteDefinitions().then(routeDefinitions => {
                 this._routeDefinitionStore = routeDefinitions
                 this._listeners.forEach(listener => {
                     listener.onRoutesChanges(routeDefinitions)
                 });
-                resolve()
-            }).catch(reason => reject(reason))
+            }).catch(reason => {
+                vscode.window.showErrorMessage(reason)
+            })
         })
     }
 
-    refreshParameters(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            this._containerProvider.provideParameters().then(parameters => {
+    refreshParameters(): void {
+        vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.PARAMETERS_FETCH_MESSAGE }, (progress, token) => {
+            return this._containerProvider.provideParameters().then(parameters => {
                 this._parameterStore = parameters
                 this._listeners.forEach(listener => {
                     listener.onParametersChanges(parameters)
                 });
-                resolve()
-            }).catch(reason => reject(reason))
+            }).catch(reason => {
+                vscode.window.showErrorMessage(reason)
+            })
         })
     }
 
-    subscribeListerner(listener: AbstractContainerStoreListener)
-    {
+    subscribeListerner(listener: AbstractContainerStoreListener) {
         this._listeners.push(listener)
     }
 
