@@ -92,7 +92,9 @@ export class ConsoleProvider implements ContainerProviderInterface {
                     let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
                     let obj = JSON.parse(buffer)
                     Object.keys(obj).forEach(key => {
-                        result.push(new Parameter(key, obj[key]))
+                        if(!this._matchParametersFilters(key)) {
+                            result.push(new Parameter(key, obj[key]))
+                        }
                     })
                     resolve(result)
                 } catch(e) {
@@ -161,6 +163,13 @@ export class ConsoleProvider implements ContainerProviderInterface {
                 return true
             }
             return false
+        })
+    }
+
+    private _matchParametersFilters(parameterId: string): boolean {
+        let filters: Array<string> = this._configuration.get("parametersFilters")
+        return filters.some(filter => {
+            return parameterId != null && (parameterId.match(new RegExp(filter)) !== null)
         })
     }
 }

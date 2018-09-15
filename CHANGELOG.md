@@ -1,6 +1,12 @@
 # Change Log
 
-## 0.0.3
+## 1.0.0
+
+* Added the `parametersFilters` setting to filter out parameters, such as classes.
+* Added the `routesFilters` setting to filter out routes, such as Assetic routes.
+    * Let know in the repository issues if default filters aren't pertinent enough ! I made them according to my work habbits, but each project is different.
+
+## 0.0.3 [08-06-2018]
 
 * Added aucompletion of public services in PHP files
 * Added the parameter view to display parameters of the Symfony container.
@@ -12,7 +18,7 @@
 * Added the "Toggle path/id display for routes" command to switch between Id and paths display on the routes view.
     * These two commands are available via buttons on the side of the two views.
 
-## 0.0.2
+## 0.0.2 [08-04-2018]
 
 * Added autocompletion of services in YAML files
 * Added the `detectCwd` setting to help with Symfony projects on Docker

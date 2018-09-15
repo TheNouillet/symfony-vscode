@@ -135,14 +135,22 @@
                         "~": "id",
                         "instanceof\\.": "id"
                     },
-                    "description": "Filter out services entirely when they match one of the given regexs. Useful for auto-generated services. Use \"id\" to filter out services by id, or \"class\" by extended class name"
+                    "description": "Filter out services entirely when they match one of the given regexes. Useful for auto-generated services. Use \"id\" to filter out services by id, or \"class\" by extended class name"
                 },
                 "symfony-vscode.routesFilters": {
                     "type": "object",
                     "default": {
                         "^_assetic_": "id"
                     },
-                    "description": "Filter out routes entirely when they match one of the given regexs. Useful for auto-generated routes. Use \"id\" to filter out routes by id, or \"path\" by route path"
+                    "description": "Filter out routes entirely when they match one of the given regexes. Useful for auto-generated routes. Use \"id\" to filter out routes by id, or \"path\" by route path"
+                },
+                "symfony-vscode.parametersFilters": {
+                    "type": "array",
+                    "default": [
+                        "\\.class$",
+                        "_class$"
+                    ],
+                    "description": "Filter out parameters entirely when their ids match one of the given regexes."
                 }
             }
         }
