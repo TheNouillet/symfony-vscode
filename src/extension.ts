@@ -8,6 +8,7 @@ import { RouteDefintionViewProvider } from './mvc/containerview/RouteDefinitionV
 import { FileWatchController } from './mvc/FileWatchController';
 import { AutocompleteController } from './mvc/AutocompleteController';
 import { ParameterViewProvider } from './mvc/containerview/ParameterViewProvider';
+import { ServiceDocumentationCodeActionProvider } from './mvc/editing/codeaction/ServiceDocumentationCodeActionProvider';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -38,6 +39,10 @@ export function activate(context: vscode.ExtensionContext) {
 
     let autocompleteController = new AutocompleteController(containerStore)
     context.subscriptions.push(autocompleteController)
+
+    let serviceDocCodeActionProvider = new ServiceDocumentationCodeActionProvider()
+    containerStore.subscribeListerner(serviceDocCodeActionProvider)
+    vscode.languages.registerCodeActionsProvider({scheme: "file", language: "php"}, serviceDocCodeActionProvider)
 
     containerStore.refreshAll()
 }

@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-import { Parameter } from "../../symfony/Parameter";
+import { Parameter } from "../../../symfony/Parameter";
 
 export class ParameterCompletionItem extends vscode.CompletionItem {
     public parameter: Parameter

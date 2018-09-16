@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { ContainerStore } from "../../symfony/ContainerStore";
+import { ContainerStore } from "../../../symfony/ContainerStore";
 import { ConfigurationFileServiceCompletionItem } from "./ConfigurationFileServiceCompletionItem";
 import { ParameterCompletionItem } from "./ParameterCompletionItem";
-import { EditingUtils } from "./EditingUtils";
+import { EditingUtils } from "../EditingUtils";
 
 export class ConfigurationFileProvider implements vscode.CompletionItemProvider {
 

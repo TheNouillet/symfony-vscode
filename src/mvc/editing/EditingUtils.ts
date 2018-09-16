@@ -12,4 +12,18 @@ export class EditingUtils {
         }
         return new vscode.Range(beginPosition, endPosition.translate(0, 1))
     }
+
+    static getLineStartPosition(document: vscode.TextDocument, line: number): vscode.Position {
+        let blanksCharacters = [" ", "\t"]
+        let currentPosition = new vscode.Position(line, 0)
+        while(blanksCharacters.indexOf(document.getText(new vscode.Range(currentPosition, currentPosition.translate(0, 1)))) !== -1) {
+            
+            currentPosition = currentPosition.translate(0, 1)
+            if(!document.validatePosition(currentPosition)) {
+                return currentPosition
+            }
+        }
+
+        return currentPosition
+    }
 }

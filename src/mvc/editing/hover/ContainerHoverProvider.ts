@@ -1,6 +1,6 @@
 import * as vscode from "vscode"
-import { ContainerStore } from "../../symfony/ContainerStore"
-import { EditingUtils } from "./EditingUtils";
+import { ContainerStore } from "../../../symfony/ContainerStore"
+import { EditingUtils } from "../EditingUtils";
 
 export class ContainerHoverProvider implements vscode.HoverProvider {
     private _containerStore: ContainerStore

@@ -1,8 +1,8 @@
 import { ContainerStore } from "../symfony/ContainerStore";
 import * as vscode from "vscode"
-import { ConfigurationFileProvider } from "./editing/ConfigurationFileProvider";
-import { PHPServiceProvider } from "./editing/PHPServiceProvider";
-import { ContainerHoverProvider } from "./editing/ContainerHoverProvider";
+import { ConfigurationFileProvider } from "./editing/autocomplete/ConfigurationFileProvider";
+import { PHPServiceProvider } from "./editing/autocomplete/PHPServiceProvider";
+import { ContainerHoverProvider } from "./editing/hover/ContainerHoverProvider";
 
 export class AutocompleteController {
     private _disposable: vscode.Disposable

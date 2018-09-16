@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { ContainerStore } from "../../symfony/ContainerStore";
+import { ContainerStore } from "../../../symfony/ContainerStore";
 import { PHPServiceCompletionItem } from "./PHPServiceCompletionItem";
 
 export class PHPServiceProvider implements vscode.CompletionItemProvider {
