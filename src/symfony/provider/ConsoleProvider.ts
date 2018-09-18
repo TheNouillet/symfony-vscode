@@ -3,7 +3,7 @@ import * as path from "path"
 
 import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
-import { execSync, ExecSyncOptions } from "child_process";
+import { exec, ExecSyncOptions } from "child_process";
 import { ComposerJSON } from "../ComposerJSON";
 import { RouteDefinition } from "../RouteDefinition";
 import { Parameter } from "../Parameter";
@@ -26,34 +26,35 @@ export class ConsoleProvider implements ContainerProviderInterface {
             this._getDebugCommand("debug:container --show-private").then(infos => {
                 let result: ServiceDefinition[] = []
                 let collection: Object = {}
-                try {
-                    let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
-                    let obj = JSON.parse(buffer)
-                    if(obj.definitions !== undefined) {
-                        Object.keys(obj.definitions).forEach(key => {
-                            collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
-                        })
-                    }
-                    if(obj.aliases !== undefined) {
-                        Object.keys(obj.aliases).forEach(key => {
-                            let alias = obj.aliases[key].service
-                            let className = collection[alias] ? collection[alias].className : null
-                            collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
-                        })
-                    }
-                    Object.keys(collection).forEach(key => {
-                        if(!this._matchServicesFilters(collection[key].id, collection[key].className)) {
-                            result.push(collection[key])
+                exec(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined, (error: Error, stdout: string, stderr: string) => {
+                    if(error !== null) {
+                        if(showErrors) {
+                            reject(error.message)
+                        } else {
+                            resolve([])
                         }
-                    });
-                    resolve(result)
-                } catch (e) {
-                    if(showErrors) {
-                        reject(e.message)
                     } else {
-                        resolve([])
+                        let obj = JSON.parse(stdout)
+                        if(obj.definitions !== undefined) {
+                            Object.keys(obj.definitions).forEach(key => {
+                                collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
+                            })
+                        }
+                        if(obj.aliases !== undefined) {
+                            Object.keys(obj.aliases).forEach(key => {
+                                let alias = obj.aliases[key].service
+                                let className = collection[alias] ? collection[alias].className : null
+                                collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
+                            })
+                        }
+                        Object.keys(collection).forEach(key => {
+                            if(!this._matchServicesFilters(collection[key].id, collection[key].className)) {
+                                result.push(collection[key])
+                            }
+                        });
+                        resolve(result)
                     }
-                }
+                })
             }).catch(reason => reject(reason))
         })
     }
@@ -63,22 +64,23 @@ export class ConsoleProvider implements ContainerProviderInterface {
         return new Promise((resolve, reject) => {
             this._getDebugCommand("debug:router").then(infos => {
                 let result: RouteDefinition[] = []
-                try {
-                    let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
-                    let obj = JSON.parse(buffer)
-                    Object.keys(obj).forEach(key => {
-                        if(!this._matchRoutesFilters(key, obj[key].path)) {
-                            result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
+                exec(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined, (error: Error, stdout: string, stderr: string) => {
+                    if(error !== null) {
+                        if(showErrors) {
+                            reject(error.message)
+                        } else {
+                            resolve([])
                         }
-                    })
-                    resolve(result)
-                } catch(e) {
-                    if(showErrors) {
-                        reject(e.message)
                     } else {
-                        resolve([])
+                        let obj = JSON.parse(stdout)
+                        Object.keys(obj).forEach(key => {
+                            if(!this._matchRoutesFilters(key, obj[key].path)) {
+                                result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
+                            }
+                        })
+                        resolve(result)
                     }
-                }
+                })
             }).catch(reason => reject(reason))
         })
     }
@@ -88,22 +90,23 @@ export class ConsoleProvider implements ContainerProviderInterface {
         return new Promise((resolve, reject) => {
             this._getDebugCommand("debug:container --parameters").then(infos => {
                 let result: Parameter[] = []
-                try {
-                    let buffer = execSync(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined).toString()
-                    let obj = JSON.parse(buffer)
-                    Object.keys(obj).forEach(key => {
-                        if(!this._matchParametersFilters(key)) {
-                            result.push(new Parameter(key, obj[key]))
+                exec(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined, (error: Error, stdout: string, stderr: string) => {
+                    if(error !== null) {
+                        if(showErrors) {
+                            reject(error.message)
+                        } else {
+                            resolve([])
                         }
-                    })
-                    resolve(result)
-                } catch(e) {
-                    if(showErrors) {
-                        reject(e.message)
                     } else {
-                        resolve([])
+                        let obj = JSON.parse(stdout)
+                        Object.keys(obj).forEach(key => {
+                            if(!this._matchParametersFilters(key)) {
+                                result.push(new Parameter(key, obj[key]))
+                            }
+                        })
+                        resolve(result)
                     }
-                }
+                })
             }).catch(reason => reject(reason))
         })
     }
