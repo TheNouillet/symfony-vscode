@@ -3,17 +3,10 @@ import * as path from "path"
 
 import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
-import { exec, ExecSyncOptions } from "child_process";
+import { spawn } from "child_process";
 import { ComposerJSON } from "../ComposerJSON";
 import { RouteDefinition } from "../RouteDefinition";
 import { Parameter } from "../Parameter";
-
-class CommandOptions implements ExecSyncOptions {
-    cwd: string = ""
-    constructor(rootDirectory: string) {
-        this.cwd = rootDirectory
-    }
-}
 
 export class ConsoleProvider implements ContainerProviderInterface {
 
@@ -21,128 +14,140 @@ export class ConsoleProvider implements ContainerProviderInterface {
     private _composerJson: ComposerJSON = new ComposerJSON()
 
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
-        let showErrors = this._configuration.get("showConsoleErrors")
-        return new Promise((resolve, reject) => {
-            this._getDebugCommand("debug:container --show-private").then(infos => {
-                let result: ServiceDefinition[] = []
-                let collection: Object = {}
-                exec(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined, (error: Error, stdout: string, stderr: string) => {
-                    if(error !== null) {
-                        if(showErrors) {
-                            reject(error.message)
-                        } else {
-                            resolve([])
-                        }
-                    } else {
-                        let obj = JSON.parse(stdout)
-                        if(obj.definitions !== undefined) {
-                            Object.keys(obj.definitions).forEach(key => {
-                                collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
-                            })
-                        }
-                        if(obj.aliases !== undefined) {
-                            Object.keys(obj.aliases).forEach(key => {
-                                let alias = obj.aliases[key].service
-                                let className = collection[alias] ? collection[alias].className : null
-                                collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
-                            })
-                        }
-                        Object.keys(collection).forEach(key => {
-                            if(!this._matchServicesFilters(collection[key].id, collection[key].className)) {
-                                result.push(collection[key])
-                            }
-                        });
-                        resolve(result)
-                    }
+        return this._executeCommand<ServiceDefinition>(["debug:container", "--show-private"], (obj) => {
+            let result: ServiceDefinition[] = []
+            let collection: Object = {}
+
+            if(obj.definitions !== undefined) {
+                Object.keys(obj.definitions).forEach(key => {
+                    collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
                 })
-            }).catch(reason => reject(reason))
+            }
+            if(obj.aliases !== undefined) {
+                Object.keys(obj.aliases).forEach(key => {
+                    let alias = obj.aliases[key].service
+                    let className = collection[alias] ? collection[alias].className : null
+                    collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
+                })
+            }
+            Object.keys(collection).forEach(key => {
+                if(!this._matchServicesFilters(collection[key].id, collection[key].className)) {
+                    result.push(collection[key])
+                }
+            });
+
+            return result
         })
     }
 
     provideRouteDefinitions(): Promise<RouteDefinition[]> {
-        let showErrors = this._configuration.get("showConsoleErrors")
-        return new Promise((resolve, reject) => {
-            this._getDebugCommand("debug:router").then(infos => {
-                let result: RouteDefinition[] = []
-                exec(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined, (error: Error, stdout: string, stderr: string) => {
-                    if(error !== null) {
-                        if(showErrors) {
-                            reject(error.message)
-                        } else {
-                            resolve([])
-                        }
-                    } else {
-                        let obj = JSON.parse(stdout)
-                        Object.keys(obj).forEach(key => {
-                            if(!this._matchRoutesFilters(key, obj[key].path)) {
-                                result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
-                            }
-                        })
-                        resolve(result)
-                    }
-                })
-            }).catch(reason => reject(reason))
+        return this._executeCommand<RouteDefinition>(["debug:router"], (obj) => {
+            let result: RouteDefinition[] = []
+
+            Object.keys(obj).forEach(key => {
+                if(!this._matchRoutesFilters(key, obj[key].path)) {
+                    result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
+                }
+            })
+
+            return result
         })
     }
 
     provideParameters(): Promise<Parameter[]> {
-        let showErrors = this._configuration.get("showConsoleErrors")
+        return this._executeCommand<Parameter>(["debug:container", "--parameters"], (obj) => {
+            let result: Parameter[] = []
+
+            Object.keys(obj).forEach(key => {
+                if(!this._matchParametersFilters(key)) {
+                    result.push(new Parameter(key, obj[key]))
+                }
+            })
+
+            return result
+        })
+    }
+
+    private _executeCommand<T>(parameters: string[], cb: (obj: any) => T[]): Promise<T[]> {
         return new Promise((resolve, reject) => {
-            this._getDebugCommand("debug:container --parameters").then(infos => {
-                let result: Parameter[] = []
-                exec(infos.cmd, this._configuration.get("detectCwd") ? new CommandOptions(infos.cwd) : undefined, (error: Error, stdout: string, stderr: string) => {
-                    if(error !== null) {
-                        if(showErrors) {
-                            reject(error.message)
+            this._getConsolePath().then(infos => {
+                let args: string[] = []
+                args.push(infos.consolePath)
+                args = args.concat(parameters)
+                args.push("--format=json")
+
+                let buffer: string = ""
+                let errorBuffer: string = ""
+                let process = spawn(this._getExecutablePath(), args, this._configuration.get("detectCwd") ? {cwd: infos.cwd} : undefined)
+                process.stdout.on('data', (data) => {
+                    buffer += data
+                })
+                process.stderr.on('data', (data) => {
+                    errorBuffer += data
+                })
+                process.on('error', (err) => {
+                    if(this._showErrors) {
+                        reject(err.message)
+                    } else {
+                        resolve([])
+                    }
+                })
+                process.on('close', (code) => {
+                    if(code !== 0) {
+                        if(this._showErrors) {
+                            reject(errorBuffer)
                         } else {
                             resolve([])
                         }
                     } else {
-                        let obj = JSON.parse(stdout)
-                        Object.keys(obj).forEach(key => {
-                            if(!this._matchParametersFilters(key)) {
-                                result.push(new Parameter(key, obj[key]))
+                        try {
+                            let obj = JSON.parse(buffer)
+                            resolve(cb(obj))
+                        } catch(e) {
+                            if(this._showErrors) {
+                                reject(e)
+                            } else {
+                                resolve([])
                             }
-                        })
-                        resolve(result)
+                        }
                     }
+                })
+            })
+        })
+    }
+
+    private _getConsolePath(): Promise<{consolePath: string, cwd: string}> {
+        return new Promise((resolve, reject) => {
+            this._composerJson.initialize().then(infos => {
+                let customConsolePath = this._configuration.get("consolePath")
+                let consolePath: string = ""
+                if(customConsolePath) {
+                    consolePath = customConsolePath + " "
+                } else {
+                    switch (infos.symfonyVersion) {
+                        case 2:
+                            consolePath = "app/console"
+                            break;
+                        case 3:
+                        default:
+                            consolePath = "bin/console"
+                            break;
+                    }
+                }
+                resolve({
+                    consolePath: consolePath,
+                    cwd: path.dirname(infos.uri.fsPath)
                 })
             }).catch(reason => reject(reason))
         })
     }
 
-    private _getDebugCommand(symfonyCommand: string): Promise<{cmd: string, cwd: string}> {
-        return new Promise((resolve, reject) => {
-            this._composerJson.initialize()
-                .then(infos => {
-                    let cmd = this._getPhpExecutablePath() + " "
-
-                    let customConsolePath = this._configuration.get("consolePath")
-                    if(customConsolePath) {
-                        cmd += customConsolePath + " "
-                    } else {
-                        switch (infos.symfonyVersion) {
-                            case 2:
-                                cmd += "app/console "
-                                break;
-                            case 3:
-                            default:
-                                cmd += "bin/console "
-                                break;
-                        }
-                    }
-
-                    cmd += symfonyCommand + " --format=json"
-                    resolve({
-                        cmd: cmd,
-                        cwd: path.dirname(infos.uri.fsPath)
-                    })
-                }).catch(reason => reject(reason))
-        })
+    private _getExecutablePath(): string {
+        return this._configuration.get("phpPath")
     }
 
-    private _getPhpExecutablePath(): string {
-        return this._configuration.get("phpPath")
+    private _showErrors(): boolean {
+        return this._configuration.get("showConsoleErrors")
     }
 
     private _matchServicesFilters(serviceId: string, serviceClassName: string): boolean {
