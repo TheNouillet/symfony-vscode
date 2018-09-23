@@ -17,9 +17,10 @@ export function activate(context: vscode.ExtensionContext) {
     let containerStore = new ContainerStore()
     const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
     const routeDefinitionViewProvider = new RouteDefintionViewProvider()
-    const parameterViewProvider = new ParameterViewProvider(containerStore)
+    const parameterViewProvider = new ParameterViewProvider()
     containerStore.subscribeListerner(serviceDefinitionViewProvider)
     containerStore.subscribeListerner(routeDefinitionViewProvider)
+    containerStore.subscribeListerner(parameterViewProvider)
 
     vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => containerStore.refreshAll())
 
@@ -49,6 +50,14 @@ export function activate(context: vscode.ExtensionContext) {
 
     vscode.window.registerTreeDataProvider("parametersView", parameterViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshParameters', () => containerStore.refreshParameters())
+    vscode.commands.registerCommand('symfony-vscode.searchForParameters', () => {
+        vscode.window.showInputBox({prompt: "Criteria (e.g. \"app\", \"doctrine\" ...)"}).then(criteria => {
+            if(criteria !== undefined) {
+                parameterViewProvider.setCriteria(criteria)
+            }
+        })
+    })
+    vscode.commands.registerCommand('symfony-vscode.clearParametersSearch', () => parameterViewProvider.clearCriteria())
 
     if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
         let fileWatchController = new FileWatchController(containerStore)

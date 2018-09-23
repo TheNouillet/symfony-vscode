@@ -1,19 +1,13 @@
-import * as vscode from "vscode"
-import { ContainerStore } from "../../symfony/ContainerStore";
 import { Parameter } from "../../symfony/Parameter";
+import { AbstractContainerViewProvider } from "./AbstractContainerViewProvider";
+import { AbstractContainerTreeItem } from "./AbstractContainerTreeItem";
 import { ParameterTreeItem } from "./ParameterTreeItem";
-import { AbstractContainerStoreListener } from "../../symfony/AbstractContainerStoreListener";
 
-export class ParameterViewProvider extends AbstractContainerStoreListener implements vscode.TreeDataProvider<vscode.TreeItem> {
-    private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
-    private _containerStore: ContainerStore
+export class ParameterViewProvider extends AbstractContainerViewProvider {
     private _parameters: Parameter[] = []
 
-    constructor(containerStore: ContainerStore) {
+    constructor() {
         super()
-        this._containerStore = containerStore
-        this._containerStore.subscribeListerner(this)
     }
 
     onParametersChanges(parameters: Parameter[]) {
@@ -21,35 +15,15 @@ export class ParameterViewProvider extends AbstractContainerStoreListener implem
         this._onDidChangeTreeData.fire()
     }
 
-    getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
-        return element
-    }
+    getTreeItems(): AbstractContainerTreeItem[] {
+        let treeItems: ParameterTreeItem[] = []
 
-    getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
-        return new Promise(resolve => {
-            if (!element && this._parameters.length > 0) {
-                let result: vscode.TreeItem[] = []
-
-                this._parameters.forEach(parameter => {
-                    result.push(new ParameterTreeItem(parameter))
-                });
-                result.sort((a, b) => {
-                    if(a.label < b.label) {
-                        return -1
-                    }
-                    if(a.label > b.label) {
-                        return 1
-                    }
-                    return 0
-                })
-                resolve(result)
-            } else {
-                if(element instanceof ParameterTreeItem) {
-                    resolve(element.childrenItems)
-                } else {
-                    resolve([])
-                }
+        this._parameters.forEach(parameter => {
+            if(this.acceptSearchable(parameter)) {
+                treeItems.push(new ParameterTreeItem(parameter))
             }
-        })
+        });
+
+        return treeItems
     }
 }

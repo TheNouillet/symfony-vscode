@@ -81,6 +81,16 @@
                 "category": "Symfony"
             },
             {
+                "command": "symfony-vscode.searchForParameters",
+                "title": "Search for Symfony parameters in the parameters view",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.clearParametersSearch",
+                "title": "Clear the parameters search criteria",
+                "category": "Symfony"
+            },
+            {
                 "command": "symfony-vscode.refreshContainer",
                 "title": "Refresh the entire container",
                 "category": "Symfony"
@@ -132,6 +142,14 @@
                 },
                 {
                     "command": "symfony-vscode.refreshParameters",
+                    "when": "view == parametersView"
+                },
+                {
+                    "command": "symfony-vscode.searchForParameters",
+                    "when": "view == parametersView"
+                },
+                {
+                    "command": "symfony-vscode.clearParametersSearch",
                     "when": "view == parametersView"
                 }
             ]
