@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { ServiceDefinition } from "../../symfony/ServiceDefinition";
+import { AbstractContainerTreeItem } from "./AbstractContainerTreeItem";
 
-export class ServiceDefinitionTreeItem extends vscode.TreeItem {
+export class ServiceDefinitionTreeItem extends AbstractContainerTreeItem {
     public serviceDefinition: ServiceDefinition
     private _displayClass: boolean
 
@@ -14,11 +15,11 @@ export class ServiceDefinitionTreeItem extends vscode.TreeItem {
         this._displayClass = displayClass
     }
 
-    get tooltip() {
+    get tooltip(): string {
         return this.serviceDefinition.className
     }
 
-    get childrenItems() {
+    get childrenItems(): vscode.TreeItem[] {
         let children: vscode.TreeItem[] = []
 
         if(this._displayClass) {

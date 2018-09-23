@@ -51,6 +51,16 @@
                 "category": "Symfony"
             },
             {
+                "command": "symfony-vscode.searchForServices",
+                "title": "Search for Symfony services in the services view",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.clearServicesSearch",
+                "title": "Clear the services search criteria",
+                "category": "Symfony"
+            },
+            {
                 "command": "symfony-vscode.refreshRouteDefinitions",
                 "title": "Refresh container routes definitions",
                 "category": "Symfony"
@@ -84,6 +94,14 @@
                 },
                 {
                     "command": "symfony-vscode.toggleClassDisplay",
+                    "when": "view == serviceDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.searchForServices",
+                    "when": "view == serviceDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.clearServicesSearch",
                     "when": "view == serviceDefinitionsView"
                 },
                 {

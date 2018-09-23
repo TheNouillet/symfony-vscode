@@ -15,15 +15,24 @@ import { ServiceDocumentationCodeActionProvider } from './mvc/editing/codeaction
 export function activate(context: vscode.ExtensionContext) {
     
     let containerStore = new ContainerStore()
-    const serviceDefinitionViewProvider = new ServiceDefintionViewProvider(containerStore)
+    const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
     const routeDefinitionViewProvider = new RouteDefintionViewProvider(containerStore)
     const parameterViewProvider = new ParameterViewProvider(containerStore)
+    containerStore.subscribeListerner(serviceDefinitionViewProvider)
 
     vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => containerStore.refreshAll())
 
     vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitions', () => containerStore.refreshServiceDefinitions())
     vscode.commands.registerCommand('symfony-vscode.toggleClassDisplay', () => serviceDefinitionViewProvider.toggleClassDisplay())
+    vscode.commands.registerCommand('symfony-vscode.searchForServices', () => {
+        vscode.window.showInputBox({prompt: "Criteria (e.g. \"AppBundle\", \"acme.helper\" ...)"}).then(criteria => {
+            if(criteria !== undefined) {
+                serviceDefinitionViewProvider.setCriteria(criteria)
+            }
+        })
+    })
+    vscode.commands.registerCommand('symfony-vscode.clearServicesSearch', () => serviceDefinitionViewProvider.clearCriteria())
 
     vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitions', () => containerStore.refreshRouteDefinitions())
