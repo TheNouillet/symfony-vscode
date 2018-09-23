@@ -66,6 +66,16 @@
                 "category": "Symfony"
             },
             {
+                "command": "symfony-vscode.searchForRoutes",
+                "title": "Search for Symfony routes in the routes view",
+                "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.clearRoutesSearch",
+                "title": "Clear the routes search criteria",
+                "category": "Symfony"
+            },
+            {
                 "command": "symfony-vscode.refreshParameters",
                 "title": "Refresh container parameters",
                 "category": "Symfony"
@@ -110,6 +120,14 @@
                 },
                 {
                     "command": "symfony-vscode.togglePathDisplay",
+                    "when": "view == routeDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.searchForRoutes",
+                    "when": "view == routeDefinitionsView"
+                },
+                {
+                    "command": "symfony-vscode.clearRoutesSearch",
                     "when": "view == routeDefinitionsView"
                 },
                 {

@@ -22,14 +22,14 @@ export class ServiceDefintionViewProvider extends AbstractContainerViewProvider 
     }
 
     getTreeItems(): AbstractContainerTreeItem[] {
-        let servicesTreeItems: ServiceDefinitionTreeItem[] = []
+        let treeItems: ServiceDefinitionTreeItem[] = []
 
         this._servicesDefinitions.forEach(serviceDefinition => {
             if(this.acceptSearchable(serviceDefinition)) {
-                servicesTreeItems.push(new ServiceDefinitionTreeItem(serviceDefinition, this._displayClasses))
+                treeItems.push(new ServiceDefinitionTreeItem(serviceDefinition, this._displayClasses))
             }
         });
 
-        return servicesTreeItems
+        return treeItems
     }
 }

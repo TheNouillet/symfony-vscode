@@ -16,9 +16,10 @@ export function activate(context: vscode.ExtensionContext) {
     
     let containerStore = new ContainerStore()
     const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
-    const routeDefinitionViewProvider = new RouteDefintionViewProvider(containerStore)
+    const routeDefinitionViewProvider = new RouteDefintionViewProvider()
     const parameterViewProvider = new ParameterViewProvider(containerStore)
     containerStore.subscribeListerner(serviceDefinitionViewProvider)
+    containerStore.subscribeListerner(routeDefinitionViewProvider)
 
     vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => containerStore.refreshAll())
 
@@ -37,6 +38,14 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitions', () => containerStore.refreshRouteDefinitions())
     vscode.commands.registerCommand('symfony-vscode.togglePathDisplay', () => routeDefinitionViewProvider.togglePathsDisplay())
+    vscode.commands.registerCommand('symfony-vscode.searchForRoutes', () => {
+        vscode.window.showInputBox({prompt: "Criteria (e.g. \"AppBundle\", \"product\" ...)"}).then(criteria => {
+            if(criteria !== undefined) {
+                routeDefinitionViewProvider.setCriteria(criteria)
+            }
+        })
+    })
+    vscode.commands.registerCommand('symfony-vscode.clearRoutesSearch', () => routeDefinitionViewProvider.clearCriteria())
 
     vscode.window.registerTreeDataProvider("parametersView", parameterViewProvider)
     vscode.commands.registerCommand('symfony-vscode.refreshParameters', () => containerStore.refreshParameters())
