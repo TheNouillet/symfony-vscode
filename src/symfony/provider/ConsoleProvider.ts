@@ -3,7 +3,7 @@ import * as path from "path"
 
 import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
-import { spawn } from "child_process";
+import { spawn, SpawnOptions } from "child_process";
 import { ComposerJSON } from "../ComposerJSON";
 import { RouteDefinition } from "../RouteDefinition";
 import { Parameter } from "../Parameter";
@@ -18,12 +18,12 @@ export class ConsoleProvider implements ContainerProviderInterface {
             let result: ServiceDefinition[] = []
             let collection: Object = {}
 
-            if(obj.definitions !== undefined) {
+            if (obj.definitions !== undefined) {
                 Object.keys(obj.definitions).forEach(key => {
                     collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
                 })
             }
-            if(obj.aliases !== undefined) {
+            if (obj.aliases !== undefined) {
                 Object.keys(obj.aliases).forEach(key => {
                     let alias = obj.aliases[key].service
                     let className = collection[alias] ? collection[alias].className : null
@@ -31,7 +31,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
                 })
             }
             Object.keys(collection).forEach(key => {
-                if(!this._matchServicesFilters(collection[key].id, collection[key].className)) {
+                if (!this._matchServicesFilters(collection[key].id, collection[key].className)) {
                     result.push(collection[key])
                 }
             });
@@ -45,7 +45,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
             let result: RouteDefinition[] = []
 
             Object.keys(obj).forEach(key => {
-                if(!this._matchRoutesFilters(key, obj[key].path)) {
+                if (!this._matchRoutesFilters(key, obj[key].path)) {
                     result.push(new RouteDefinition(key, obj[key].path, obj[key].method, obj[key].defaults._controller))
                 }
             })
@@ -59,7 +59,7 @@ export class ConsoleProvider implements ContainerProviderInterface {
             let result: Parameter[] = []
 
             Object.keys(obj).forEach(key => {
-                if(!this._matchParametersFilters(key)) {
+                if (!this._matchParametersFilters(key)) {
                     result.push(new Parameter(key, obj[key]))
                 }
             })
@@ -78,50 +78,67 @@ export class ConsoleProvider implements ContainerProviderInterface {
 
                 let buffer: string = ""
                 let errorBuffer: string = ""
-                let process = spawn(this._getExecutablePath(), args, this._configuration.get("detectCwd") ? {cwd: infos.cwd} : undefined)
-                process.stdout.on('data', (data) => {
-                    buffer += data
-                })
-                process.stderr.on('data', (data) => {
-                    errorBuffer += data
-                })
-                process.on('error', (err) => {
-                    if(this._showErrors) {
-                        reject(err.message)
-                    } else {
-                        resolve([])
+                try {
+                    let executable: string = this._getPHPExecutablePath()
+                    let options: SpawnOptions = { cwd: infos.cwd }
+
+                    let shellExecutable: string | boolean = false
+                    if (shellExecutable = this._getShellExecutable()) {
+                        executable = this._getShellCommand()
+                        options = { shell: shellExecutable }
                     }
-                })
-                process.on('close', (code) => {
-                    if(code !== 0) {
-                        if(this._showErrors) {
-                            reject(errorBuffer)
+
+                    let process = spawn(executable, args, options)
+                    process.stdout.on('data', (data) => {
+                        buffer += data
+                    })
+                    process.stderr.on('data', (data) => {
+                        errorBuffer += data
+                    })
+                    process.on('error', (err) => {
+                        if (this._showErrors) {
+                            reject(err.message)
                         } else {
                             resolve([])
                         }
-                    } else {
-                        try {
-                            let obj = JSON.parse(buffer)
-                            resolve(cb(obj))
-                        } catch(e) {
-                            if(this._showErrors) {
-                                reject(e)
+                    })
+                    process.on('close', (code) => {
+                        if (code !== 0) {
+                            if (this._showErrors) {
+                                reject(errorBuffer)
                             } else {
                                 resolve([])
                             }
+                        } else {
+                            try {
+                                let obj = JSON.parse(buffer)
+                                resolve(cb(obj))
+                            } catch (e) {
+                                if (this._showErrors) {
+                                    reject(e)
+                                } else {
+                                    resolve([])
+                                }
+                            }
                         }
+                    })
+                } catch (e) {
+                    if (this._showErrors) {
+                        reject(e)
+                    } else {
+                        resolve([])
                     }
-                })
+                }
             })
         })
     }
 
-    private _getConsolePath(): Promise<{consolePath: string, cwd: string}> {
+    private _getConsolePath(): Promise<{ consolePath: string, cwd: string }> {
         return new Promise((resolve, reject) => {
             this._composerJson.initialize().then(infos => {
                 let customConsolePath = this._configuration.get("consolePath")
                 let consolePath: string = ""
-                if(customConsolePath) {
+                if (customConsolePath) {
                     consolePath = customConsolePath + " "
                 } else {
                     switch (infos.symfonyVersion) {
@@ -142,8 +159,16 @@ export class ConsoleProvider implements ContainerProviderInterface {
         })
     }
 
-    private _getExecutablePath(): string {
-        return this._configuration.get("phpPath")
+    private _getPHPExecutablePath(): string {
+        return this._configuration.get("phpExecutablePath")
+    }
+
+    private _getShellExecutable(): string {
+        return this._configuration.get("shellExecutable")
+    }
+
+    private _getShellCommand(): string {
+        return this._configuration.get("shellCommand")
     }
 
     private _showErrors(): boolean {
@@ -153,9 +178,9 @@ export class ConsoleProvider implements ContainerProviderInterface {
     private _matchServicesFilters(serviceId: string, serviceClassName: string): boolean {
         let filters: object = this._configuration.get("servicesFilters")
         return Object.keys(filters).some(filter => {
-            if(filters[filter] === "id" && serviceId != null && serviceId.match(new RegExp(filter))) {
+            if (filters[filter] === "id" && serviceId != null && serviceId.match(new RegExp(filter))) {
                 return true
-            } else if(filters[filter] === "class" && serviceClassName != null &&  serviceClassName.match(new RegExp(filter))) {
+            } else if (filters[filter] === "class" && serviceClassName != null && serviceClassName.match(new RegExp(filter))) {
                 return true
             }
             return false
@@ -165,9 +190,9 @@ export class ConsoleProvider implements ContainerProviderInterface {
     private _matchRoutesFilters(routeId: string, routePath: string): boolean {
         let filters: object = this._configuration.get("routesFilters")
         return Object.keys(filters).some(filter => {
-            if(filters[filter] === "id" && routeId != null && routeId.match(new RegExp(filter))) {
+            if (filters[filter] === "id" && routeId != null && routeId.match(new RegExp(filter))) {
                 return true
-            } else if(filters[filter] === "path" && routePath != null &&  routePath.match(new RegExp(filter))) {
+            } else if (filters[filter] === "path" && routePath != null && routePath.match(new RegExp(filter))) {
                 return true
             }
             return false
