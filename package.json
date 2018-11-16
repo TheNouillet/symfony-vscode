@@ -157,20 +157,25 @@
         "configuration": {
             "title": "Symfony for VSCode",
             "properties": {
-                "symfony-vscode.phpPath": {
+                "symfony-vscode.phpExecutablePath": {
                     "type": "string",
                     "default": "/usr/bin/php",
-                    "description": "Path to the PHP executable"
+                    "description": "Path to the PHP executable. This path is ignored if the symfony-vscode.shellExecutable parameter is different than false"
+                },
+                "symfony-vscode.shellExecutable": {
+                    "type": "string",
+                    "default": false,
+                    "description": "The shell executable path. If differant that false, console commands will be called via shell instead of just calling the PHP executable."
+                },
+                "symfony-vscode.shellCommand": {
+                    "type": "string",
+                    "default": false,
+                    "description": "The shell command. Only used when calling the shell to do console commands."
                 },
                 "symfony-vscode.consolePath": {
                     "type": ["string", "null"],
                     "default": null,
                     "description": "Path to the Symfony console, relative to the root directeory. If null, the extension try to guess the path with the Symfony version from the composer.json file"
-                },
-                "symfony-vscode.detectCwd": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "If false, the extension doesn't try to auto detect the root direct from where it executes console commands. Useful if your PHP executable path relocate into a specific directory."
                 },
                 "symfony-vscode.showConsoleErrors": {
                     "type": "boolean",
@@ -181,6 +186,15 @@
                     "type": "boolean",
                     "default": true,
                     "description": "If false, the extension refresh automatically when a YAML file is modified"
+                },
+                "symfony-vscode.fileWatchingPatterns": {
+                    "type": "array",
+                    "default": [
+                        "yml",
+                        "yaml",
+                        "xml"
+                    ],
+                    "description": "Files with one of these extensions will trigger a container refresh on save"
                 },
                 "symfony-vscode.servicesFilters": {
                     "type": "object",
