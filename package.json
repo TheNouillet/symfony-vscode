@@ -133,6 +133,15 @@
                     "default": true,
                     "description": "If false, the extension refresh automatically when a YAML file is modified"
                 },
+                "symfony-vscode.fileWatchingPatterns": {
+                    "type": "array",
+                    "default": [
+                        "yml",
+                        "yaml",
+                        "xml"
+                    ],
+                    "description": "Files with one of these extensions will trigger a container refresh on save"
+                },
                 "symfony-vscode.servicesFilters": {
                     "type": "object",
                     "default": {
