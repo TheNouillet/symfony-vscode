@@ -4,33 +4,37 @@
 import * as vscode from 'vscode';
 import { ServiceDefintionViewProvider } from './mvc/containerview/ServiceDefintionViewProvider';
 import { ContainerStore } from './symfony/ContainerStore';
-import { RouteDefintionViewProvider } from './mvc/containerview/RouteDefinitionViewProvider';
+import { RouteDefinitionViewProvider } from './mvc/containerview/RouteDefinitionViewProvider';
 import { FileWatchController } from './mvc/FileWatchController';
 import { AutocompleteController } from './mvc/AutocompleteController';
 import { ParameterViewProvider } from './mvc/containerview/ParameterViewProvider';
 import { ServiceDocumentationCodeActionProvider } from './mvc/editing/codeaction/ServiceDocumentationCodeActionProvider';
+import { ServicesCommandController } from './mvc/ServicesCommandController';
+import { RoutesCommandController } from './mvc/RoutesCommandController';
+import { ParametersCommandController } from './mvc/ParametersCommandController';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
     
     let containerStore = new ContainerStore()
-    const serviceDefinitionViewProvider = new ServiceDefintionViewProvider(containerStore)
-    const routeDefinitionViewProvider = new RouteDefintionViewProvider(containerStore)
-    const parameterViewProvider = new ParameterViewProvider(containerStore)
+    const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
+    const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
+    const parameterViewProvider = new ParameterViewProvider()
+    containerStore.subscribeListerner(serviceDefinitionViewProvider)
+    containerStore.subscribeListerner(routeDefinitionViewProvider)
+    containerStore.subscribeListerner(parameterViewProvider)
 
     vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => containerStore.refreshAll())
 
     vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
-    vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitions', () => containerStore.refreshServiceDefinitions())
-    vscode.commands.registerCommand('symfony-vscode.toggleClassDisplay', () => serviceDefinitionViewProvider.toggleClassDisplay())
+    let servicesCommandController = new ServicesCommandController(containerStore, serviceDefinitionViewProvider)
 
     vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
-    vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitions', () => containerStore.refreshRouteDefinitions())
-    vscode.commands.registerCommand('symfony-vscode.togglePathDisplay', () => routeDefinitionViewProvider.togglePathsDisplay())
+    let routesCommandController = new RoutesCommandController(containerStore, routeDefinitionViewProvider)
 
     vscode.window.registerTreeDataProvider("parametersView", parameterViewProvider)
-    vscode.commands.registerCommand('symfony-vscode.refreshParameters', () => containerStore.refreshParameters())
+    let parametersCommandController = new ParametersCommandController(containerStore, parameterViewProvider)
 
     if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
         let fileWatchController = new FileWatchController(containerStore)

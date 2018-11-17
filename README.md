@@ -41,3 +41,9 @@ A: You have to tell the extension to do console commands via shell to your docke
 ## Release Notes
 
 See [the changelog](CHANGELOG.md) for releases notes.
+
+## Acknowledgments
+
+Icons from www.flaticon.com, by :
+* [Chanut](https://www.flaticon.com/authors/chanut)
+* [SimpleIcon](https://www.flaticon.com/authors/simpleicon)

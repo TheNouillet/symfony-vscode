@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { RouteDefinition } from "../../symfony/RouteDefinition";
+import { AbstractContainerTreeItem } from "./AbstractContainerTreeItem";
 
-export class RouteDefinitionTreeItem extends vscode.TreeItem {
+export class RouteDefinitionTreeItem extends AbstractContainerTreeItem {
     private _routeDefinition: RouteDefinition
     private _displayPath: boolean
 
@@ -18,7 +19,7 @@ export class RouteDefinitionTreeItem extends vscode.TreeItem {
         return this._routeDefinition.path + " [" + this._routeDefinition.method + "]"
     }
 
-    get childrenItems() {
+    get childrenItems(): vscode.TreeItem[] {
         let children: vscode.TreeItem[] = []
 
         if(this._displayPath) {

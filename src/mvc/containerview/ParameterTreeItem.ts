@@ -1,9 +1,9 @@
 import * as vscode from "vscode";
 import { Parameter } from "../../symfony/Parameter";
+import { AbstractContainerTreeItem } from "./AbstractContainerTreeItem";
 
-export class ParameterTreeItem extends vscode.TreeItem {
+export class ParameterTreeItem extends AbstractContainerTreeItem {
     private _parameter: Parameter
-    private _displayPath: boolean
 
     constructor(
         parameter: Parameter
@@ -16,7 +16,7 @@ export class ParameterTreeItem extends vscode.TreeItem {
         return this._parameter.value
     }
 
-    get childrenItems() {
+    get childrenItems(): vscode.TreeItem[] {
         return [new vscode.TreeItem("Value : " + this._parameter.value, vscode.TreeItemCollapsibleState.None)]
     }
 }
