@@ -4,7 +4,7 @@ import { RouteDefinitionTreeItem } from "./RouteDefinitionTreeItem";
 import { AbstractContainerViewProvider } from "./AbstractContainerViewProvider";
 import { AbstractContainerTreeItem } from "./AbstractContainerTreeItem";
 
-export class RouteDefintionViewProvider extends AbstractContainerViewProvider {
+export class RouteDefinitionViewProvider extends AbstractContainerViewProvider {
     private _routesDefinitions: RouteDefinition[] = []
     private _displayPaths: boolean = false
 

@@ -8,9 +8,13 @@ export abstract class AbstractContainerViewProvider extends AbstractContainerSto
     protected _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
     readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
     protected _searchCriteria: string | boolean = false
+    protected _previousSearchCriteria: string = null
 
     setCriteria(criteria: string | boolean): void {
         this._searchCriteria = criteria
+        if(criteria) {
+            this._previousSearchCriteria = <string>criteria
+        }
         this._onDidChangeTreeData.fire()
     }
 
@@ -64,4 +68,8 @@ export abstract class AbstractContainerViewProvider extends AbstractContainerSto
     }
 
     abstract getTreeItems(): AbstractContainerTreeItem[]
+
+    get previousSearchCriteria(): string {
+        return this._previousSearchCriteria
+    }
 }
