@@ -110,47 +110,58 @@
             "view/title": [
                 {
                     "command": "symfony-vscode.refreshServiceDefinitions",
-                    "when": "view == serviceDefinitionsView"
+                    "when": "view == serviceDefinitionsView",
+                    "group": "2_workspace@1"
                 },
                 {
                     "command": "symfony-vscode.toggleClassDisplay",
-                    "when": "view == serviceDefinitionsView"
+                    "when": "view == serviceDefinitionsView",
+                    "group": "2_workspace@2"
                 },
                 {
                     "command": "symfony-vscode.searchForServices",
-                    "when": "view == serviceDefinitionsView"
+                    "when": "view == serviceDefinitionsView",
+                    "group": "4_search@1"
                 },
                 {
                     "command": "symfony-vscode.clearServicesSearch",
-                    "when": "view == serviceDefinitionsView"
+                    "when": "view == serviceDefinitionsView",
+                    "group": "4_search@2"
                 },
                 {
                     "command": "symfony-vscode.refreshRouteDefinitions",
-                    "when": "view == routeDefinitionsView"
+                    "when": "view == routeDefinitionsView",
+                    "group": "2_workspace@1"
                 },
                 {
                     "command": "symfony-vscode.togglePathDisplay",
-                    "when": "view == routeDefinitionsView"
+                    "when": "view == routeDefinitionsView",
+                    "group": "2_workspace@2"
                 },
                 {
                     "command": "symfony-vscode.searchForRoutes",
-                    "when": "view == routeDefinitionsView"
+                    "when": "view == routeDefinitionsView",
+                    "group": "4_search@1"
                 },
                 {
                     "command": "symfony-vscode.clearRoutesSearch",
-                    "when": "view == routeDefinitionsView"
+                    "when": "view == routeDefinitionsView",
+                    "group": "4_search@2"
                 },
                 {
                     "command": "symfony-vscode.refreshParameters",
-                    "when": "view == parametersView"
+                    "when": "view == parametersView",
+                    "group": "2_workspace@1"
                 },
                 {
                     "command": "symfony-vscode.searchForParameters",
-                    "when": "view == parametersView"
+                    "when": "view == parametersView",
+                    "group": "4_search@1"
                 },
                 {
                     "command": "symfony-vscode.clearParametersSearch",
-                    "when": "view == parametersView"
+                    "when": "view == parametersView",
+                    "group": "4_search@2"
                 }
             ]
         },
