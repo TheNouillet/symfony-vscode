@@ -53,12 +53,20 @@
             {
                 "command": "symfony-vscode.searchForServices",
                 "title": "Search for Symfony services in the services view",
-                "category": "Symfony"
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/search.svg",
+                    "dark": "media/dark/search.svg"
+                }
             },
             {
                 "command": "symfony-vscode.clearServicesSearch",
                 "title": "Clear the services search criteria",
-                "category": "Symfony"
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/cancel.svg",
+                    "dark": "media/dark/cancel.svg"
+                }
             },
             {
                 "command": "symfony-vscode.refreshRouteDefinitions",
@@ -68,12 +76,20 @@
             {
                 "command": "symfony-vscode.searchForRoutes",
                 "title": "Search for Symfony routes in the routes view",
-                "category": "Symfony"
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/search.svg",
+                    "dark": "media/dark/search.svg"
+                }
             },
             {
                 "command": "symfony-vscode.clearRoutesSearch",
                 "title": "Clear the routes search criteria",
-                "category": "Symfony"
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/cancel.svg",
+                    "dark": "media/dark/cancel.svg"
+                }
             },
             {
                 "command": "symfony-vscode.refreshParameters",
@@ -83,12 +99,20 @@
             {
                 "command": "symfony-vscode.searchForParameters",
                 "title": "Search for Symfony parameters in the parameters view",
-                "category": "Symfony"
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/search.svg",
+                    "dark": "media/dark/search.svg"
+                }
             },
             {
                 "command": "symfony-vscode.clearParametersSearch",
                 "title": "Clear the parameters search criteria",
-                "category": "Symfony"
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/cancel.svg",
+                    "dark": "media/dark/cancel.svg"
+                }
             },
             {
                 "command": "symfony-vscode.refreshContainer",
@@ -121,12 +145,7 @@
                 {
                     "command": "symfony-vscode.searchForServices",
                     "when": "view == serviceDefinitionsView",
-                    "group": "4_search@1"
-                },
-                {
-                    "command": "symfony-vscode.clearServicesSearch",
-                    "when": "view == serviceDefinitionsView",
-                    "group": "4_search@2"
+                    "group": "navigation"
                 },
                 {
                     "command": "symfony-vscode.refreshRouteDefinitions",
@@ -141,12 +160,7 @@
                 {
                     "command": "symfony-vscode.searchForRoutes",
                     "when": "view == routeDefinitionsView",
-                    "group": "4_search@1"
-                },
-                {
-                    "command": "symfony-vscode.clearRoutesSearch",
-                    "when": "view == routeDefinitionsView",
-                    "group": "4_search@2"
+                    "group": "navigation"
                 },
                 {
                     "command": "symfony-vscode.refreshParameters",
@@ -156,12 +170,24 @@
                 {
                     "command": "symfony-vscode.searchForParameters",
                     "when": "view == parametersView",
-                    "group": "4_search@1"
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "symfony-vscode.clearServicesSearch",
+                    "when": "viewItem == symfony-vscode.searchItem.service",
+                    "group": "inline"
+                },
+                {
+                    "command": "symfony-vscode.clearRoutesSearch",
+                    "when": "viewItem == symfony-vscode.searchItem.route",
+                    "group": "inline"
                 },
                 {
                     "command": "symfony-vscode.clearParametersSearch",
-                    "when": "view == parametersView",
-                    "group": "4_search@2"
+                    "when": "viewItem == symfony-vscode.searchItem.parameter",
+                    "group": "inline"
                 }
             ]
         },

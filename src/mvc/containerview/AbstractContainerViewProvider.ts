@@ -26,6 +26,10 @@ export abstract class AbstractContainerViewProvider extends AbstractContainerSto
         return element
     }
 
+    protected _getSearchItemContext(): string {
+        return null
+    }
+
     getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
         return new Promise(resolve => {
             if (!element) {
@@ -42,7 +46,11 @@ export abstract class AbstractContainerViewProvider extends AbstractContainerSto
                 })
 
                 if (false !== this._searchCriteria) {
-                    result.push(new vscode.TreeItem("Searching for : " + this._searchCriteria))
+                    let searchTreeItem : vscode.TreeItem = new vscode.TreeItem("Searching for : " + this._searchCriteria)
+                    if(this._getSearchItemContext()) {
+                        searchTreeItem.contextValue = this._getSearchItemContext()
+                    }
+                    result.push(searchTreeItem)
                 }
                 resolve(result.concat(containerTreeItems))
             } else {

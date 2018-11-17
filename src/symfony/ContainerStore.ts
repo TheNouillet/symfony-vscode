@@ -14,8 +14,8 @@ export class ContainerStore {
     private _parameterStore: Parameter[] = []
     private _listeners: AbstractContainerStoreListener[] = []
 
-    private static SERVICES_FETCH_MESSAGE = "Fetching Symfony services definition..."
-    private static ROUTES_FETCH_MESSAGE = "Fetching Symfony routes definition..."
+    private static SERVICES_FETCH_MESSAGE = "Fetching Symfony services definitions..."
+    private static ROUTES_FETCH_MESSAGE = "Fetching Symfony routes definitions..."
     private static PARAMETERS_FETCH_MESSAGE = "Fetching Symfony parameters..."
 
     refreshAll(): void {

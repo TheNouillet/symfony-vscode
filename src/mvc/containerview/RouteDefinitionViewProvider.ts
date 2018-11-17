@@ -33,4 +33,8 @@ export class RouteDefintionViewProvider extends AbstractContainerViewProvider {
 
         return treeItems
     }
+
+    protected _getSearchItemContext(): string {
+        return 'symfony-vscode.searchItem.route'
+    }
 }

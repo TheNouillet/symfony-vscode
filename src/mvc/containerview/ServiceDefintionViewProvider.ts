@@ -32,4 +32,8 @@ export class ServiceDefintionViewProvider extends AbstractContainerViewProvider 
 
         return treeItems
     }
+
+    protected _getSearchItemContext(): string {
+        return 'symfony-vscode.searchItem.service'
+    }
 }
