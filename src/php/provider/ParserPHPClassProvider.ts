@@ -66,14 +66,12 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
         return new Promise<PHPClass>((resolve) => {
             readFile(uri.path, (err, data) => {
                 if(err) {
-                    console.error(err)
                     resolve(null)
                 } else {
                     try {
                         let ast = this._engine.parseCode(data.toString())
                         resolve(this._hydratePHPClass(ast, uri))
                     } catch(e) {
-                        console.error(e)
                         resolve(null)
                     }
                 }

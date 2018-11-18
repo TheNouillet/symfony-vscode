@@ -3,9 +3,10 @@ import * as vscode from "vscode"
 import { ConfigurationFileProvider } from "./editing/autocomplete/ConfigurationFileProvider";
 import { PHPServiceProvider } from "./editing/autocomplete/PHPServiceProvider";
 import { ContainerHoverProvider } from "./editing/hover/ContainerHoverProvider";
-import { ServiceDefinitionProvider } from "./editing/definition/ServiceDefinitionProvider";
 import { PHPClassStore } from "../php/PHPClassStore";
 import { ServiceDefinitionTreeItem } from "./containerview/ServiceDefinitionTreeItem";
+import { ConfigurationFileServiceDefinitionProvider } from "./editing/definition/ConfigurationFileServiceDefinitionProvider";
+import { PHPServiceDefinitionProvider } from "./editing/definition/PHPServiceDefinitionProvider";
 
 export class AutocompleteController {
     private _disposable: vscode.Disposable
@@ -14,7 +15,8 @@ export class AutocompleteController {
         let configurationFileProvider = new ConfigurationFileProvider(containerStore)
         let phpServiceProvider = new PHPServiceProvider(containerStore)
         let hoverProvider = new ContainerHoverProvider(containerStore)
-        let serviceDefinitionProvider = new ServiceDefinitionProvider(containerStore, phpClassStore)
+        let confFileServiveDefinitionProvider = new ConfigurationFileServiceDefinitionProvider(containerStore, phpClassStore)
+        let phpServiceDefinitionProvider = new PHPServiceDefinitionProvider(containerStore, phpClassStore)
 
         let disposables: vscode.Disposable[] = []
         disposables.push(vscode.languages.registerCompletionItemProvider({ scheme: 'file', language: 'yaml' }, configurationFileProvider, "@"))
@@ -23,16 +25,16 @@ export class AutocompleteController {
         disposables.push(vscode.languages.registerHoverProvider({ scheme: 'file', language: 'yaml' }, hoverProvider))
         disposables.push(vscode.languages.registerHoverProvider({ scheme: 'file', language: 'xml' }, hoverProvider))
         disposables.push(vscode.languages.registerHoverProvider({ scheme: 'file', language: 'php' }, hoverProvider))
-        disposables.push(vscode.languages.registerDefinitionProvider({ scheme: 'file', language: 'yaml' }, serviceDefinitionProvider))
-        disposables.push(vscode.languages.registerDefinitionProvider({ scheme: 'file', language: 'xml' }, serviceDefinitionProvider))
-        disposables.push(vscode.languages.registerDefinitionProvider({ scheme: 'file', language: 'php' }, serviceDefinitionProvider))
+        disposables.push(vscode.languages.registerDefinitionProvider({ scheme: 'file', language: 'yaml' }, confFileServiveDefinitionProvider))
+        disposables.push(vscode.languages.registerDefinitionProvider({ scheme: 'file', language: 'xml' }, confFileServiveDefinitionProvider))
+        disposables.push(vscode.languages.registerDefinitionProvider({ scheme: 'file', language: 'php' }, phpServiceDefinitionProvider))
 
         this._disposable = vscode.Disposable.from(...disposables)
 
         vscode.commands.registerCommand('symfony-vscode.goToServiceDefinition', (args) => {
             if(args && args instanceof ServiceDefinitionTreeItem) {
                 let serviceDefinition = args.serviceDefinition
-                let location = serviceDefinitionProvider.getLocationOfService(serviceDefinition)
+                let location = confFileServiveDefinitionProvider.getLocationOfService(serviceDefinition)
                 if(location) {
                     vscode.window.showTextDocument(location.uri, {
                         selection: location.range

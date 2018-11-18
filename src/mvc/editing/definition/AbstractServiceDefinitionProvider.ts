@@ -4,9 +4,9 @@ import { EditingUtils } from "../EditingUtils";
 import { ContainerStore } from "../../../symfony/ContainerStore";
 import { ServiceDefinition } from "../../../symfony/ServiceDefinition";
 
-export class ServiceDefinitionProvider implements vscode.DefinitionProvider {
-    private _containerStore: ContainerStore
-    private _phpClassStore: PHPClassStore
+export abstract class AbstractServiceDefinitionProvider implements vscode.DefinitionProvider {
+    protected _containerStore: ContainerStore
+    protected _phpClassStore: PHPClassStore
 
     constructor(containerStore: ContainerStore, phpClassStore: PHPClassStore) {
         this._containerStore = containerStore
@@ -16,8 +16,8 @@ export class ServiceDefinitionProvider implements vscode.DefinitionProvider {
     provideDefinition(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken): vscode.ProviderResult<vscode.Definition> {
         let wordRange = EditingUtils.getWordRange(document, position)
         let hoveredWord = document.getText(wordRange)
-        let serviceDefinition = this._containerStore.serviceDefinitionList.find(serviceDefinition => {
-            return hoveredWord === serviceDefinition.id || hoveredWord === serviceDefinition.className
+        let serviceDefinition = this._containerStore.serviceDefinitionList.find(service => {
+            return this.acceptServiceDefinition(hoveredWord, service)
         });
         if(serviceDefinition !== undefined) {
             return this.getLocationOfService(serviceDefinition)
@@ -34,4 +34,6 @@ export class ServiceDefinitionProvider implements vscode.DefinitionProvider {
             return null
         }
     }
+
+    abstract acceptServiceDefinition(hoveredWord: string, serviceDefinition: ServiceDefinition): boolean
 }
