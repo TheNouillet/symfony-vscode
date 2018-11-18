@@ -12,12 +12,14 @@ import { ServiceDocumentationCodeActionProvider } from './mvc/editing/codeaction
 import { ServicesCommandController } from './mvc/ServicesCommandController';
 import { RoutesCommandController } from './mvc/RoutesCommandController';
 import { ParametersCommandController } from './mvc/ParametersCommandController';
+import { PHPClassStore } from './php/PHPClassStore';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
     
     let containerStore = new ContainerStore()
+    let phpClassStore = new PHPClassStore()
     const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
     const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
     const parameterViewProvider = new ParameterViewProvider()

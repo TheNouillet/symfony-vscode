@@ -210,7 +210,10 @@
                     "description": "The shell command. Only used when calling the shell to do console commands."
                 },
                 "symfony-vscode.consolePath": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "default": null,
                     "description": "Path to the Symfony console, relative to the root directeory. If null, the extension try to guess the path with the Symfony version from the composer.json file"
                 },
@@ -268,9 +271,13 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
+        "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6"
+    },
+    "dependencies": {
+        "graceful-fs": "^4.1.15",
+        "php-parser": "^3.0.0-prerelease.7"
     }
 }
