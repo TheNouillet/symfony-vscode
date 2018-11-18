@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
     let parametersCommandController = new ParametersCommandController(containerStore, parameterViewProvider)
 
     if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
-        let fileWatchController = new FileWatchController(containerStore)
+        let fileWatchController = new FileWatchController(containerStore, phpClassStore)
         context.subscriptions.push(fileWatchController)
     }
 
@@ -50,7 +50,9 @@ export function activate(context: vscode.ExtensionContext) {
     containerStore.subscribeListerner(serviceDocCodeActionProvider)
     vscode.languages.registerCodeActionsProvider({scheme: "file", language: "php"}, serviceDocCodeActionProvider)
 
-    containerStore.refreshAll()
+    containerStore.refreshAll(() => {
+        phpClassStore.refreshAll()
+    })
 }
 
 // this method is called when your extension is deactivated

@@ -18,7 +18,7 @@ export class ContainerStore {
     private static ROUTES_FETCH_MESSAGE = "Fetching Symfony routes definitions..."
     private static PARAMETERS_FETCH_MESSAGE = "Fetching Symfony parameters..."
 
-    refreshAll(): void {
+    refreshAll(cb?: () => void): void {
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.SERVICES_FETCH_MESSAGE }, (progress, token) => {
             return this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
                 this._serviceDefinitionStore = servicesDefinitions
@@ -39,16 +39,20 @@ export class ContainerStore {
                                 this._listeners.forEach(listerner => {
                                     listerner.onParametersChanges(parameters)
                                 });
+                                cb()
                             }).catch(reason => {
                                 vscode.window.showErrorMessage(reason)
+                                cb()
                             })
                         })
                     }).catch(reason => {
                         vscode.window.showErrorMessage(reason)
+                        cb()
                     })
                 })
             }).catch(reason => {
                 vscode.window.showErrorMessage(reason)
+                cb()
             })
         })
     }

@@ -9,11 +9,6 @@ export class PHPClassStore {
 
     private static PHP_CLASS_FETCH_MESSAGE = "Fetching PHP classes..."
 
-    constructor() {
-        // TODO: cache system
-        this.refreshAll()
-    }
-
     refreshAll(): void {
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: PHPClassStore.PHP_CLASS_FETCH_MESSAGE }, (progress, token) => {
             return this._phpClassProvider.updateAllClasses().then(phpClasses => {

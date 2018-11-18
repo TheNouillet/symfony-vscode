@@ -1,19 +1,25 @@
 import * as vscode from "vscode";
 import { ContainerStore } from "../symfony/ContainerStore";
+import { PHPClassStore } from "../php/PHPClassStore";
 
 export class FileWatchController {
     private _containerStore: ContainerStore
+    private _phpClassStore: PHPClassStore
     private _disposable: vscode.Disposable
     private _configuration = vscode.workspace.getConfiguration("symfony-vscode")
 
-    constructor(containerStore: ContainerStore) {
+    constructor(containerStore: ContainerStore, phpClassStore: PHPClassStore) {
         this._containerStore = containerStore
+        this._phpClassStore = phpClassStore
         let fileNameRegExp = this._getFileNameRegExp()
 
         let subscriptions: vscode.Disposable[] = []
         vscode.workspace.onDidSaveTextDocument(e => {
             if(e.fileName.match(fileNameRegExp)) {
                 this._containerStore.refreshAll()
+            }
+            if(e.fileName.match(/\.php$/)) {
+                this._phpClassStore.refresh(e.uri)
             }
         }, this, subscriptions)
 
