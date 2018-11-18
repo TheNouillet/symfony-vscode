@@ -69,6 +69,15 @@
                 }
             },
             {
+                "command": "symfony-vscode.goToServiceDefinition",
+                "title": "Go to service definition",
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/goto.svg",
+                    "dark": "media/dark/goto.svg"
+                }
+            },
+            {
                 "command": "symfony-vscode.refreshRouteDefinitions",
                 "title": "Refresh container routes definitions",
                 "category": "Symfony"
@@ -187,6 +196,11 @@
                 {
                     "command": "symfony-vscode.clearParametersSearch",
                     "when": "viewItem == symfony-vscode.searchItem.parameter",
+                    "group": "inline"
+                },
+                {
+                    "command": "symfony-vscode.goToServiceDefinition",
+                    "when": "viewItem == symfony-vscode.service",
                     "group": "inline"
                 }
             ]

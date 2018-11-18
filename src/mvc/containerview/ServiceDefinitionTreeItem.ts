@@ -35,4 +35,8 @@ export class ServiceDefinitionTreeItem extends AbstractContainerTreeItem {
 
         return children
     }
+
+    get contextValue(): string {
+        return 'symfony-vscode.service'
+    }
 }

@@ -5,6 +5,7 @@ import { PHPServiceProvider } from "./editing/autocomplete/PHPServiceProvider";
 import { ContainerHoverProvider } from "./editing/hover/ContainerHoverProvider";
 import { ServiceDefinitionProvider } from "./editing/definition/ServiceDefinitionProvider";
 import { PHPClassStore } from "../php/PHPClassStore";
+import { ServiceDefinitionTreeItem } from "./containerview/ServiceDefinitionTreeItem";
 
 export class AutocompleteController {
     private _disposable: vscode.Disposable
@@ -27,6 +28,20 @@ export class AutocompleteController {
         disposables.push(vscode.languages.registerDefinitionProvider({ scheme: 'file', language: 'php' }, serviceDefinitionProvider))
 
         this._disposable = vscode.Disposable.from(...disposables)
+
+        vscode.commands.registerCommand('symfony-vscode.goToServiceDefinition', (args) => {
+            if(args && args instanceof ServiceDefinitionTreeItem) {
+                let serviceDefinition = args.serviceDefinition
+                let location = serviceDefinitionProvider.getLocationOfService(serviceDefinition)
+                if(location) {
+                    vscode.window.showTextDocument(location.uri, {
+                        selection: location.range
+                    })
+                } else {
+                    vscode.window.showErrorMessage("Class \"" + serviceDefinition.className + "\" not found")
+                }
+            }
+        })
     }
 
     dispose() {
