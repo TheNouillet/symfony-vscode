@@ -7,6 +7,9 @@ import { PHPClassStore } from "../php/PHPClassStore";
 import { ServiceDefinitionTreeItem } from "./containerview/ServiceDefinitionTreeItem";
 import { ConfigurationFileServiceDefinitionProvider } from "./editing/definition/ConfigurationFileServiceDefinitionProvider";
 import { PHPServiceDefinitionProvider } from "./editing/definition/PHPServiceDefinitionProvider";
+import { ServiceQuickPickItem } from "./editing/quickpick/ServiceQuickPickItem";
+import { ServiceDefinition } from "../symfony/ServiceDefinition";
+import { AbstractServiceDefinitionProvider } from "./editing/definition/AbstractServiceDefinitionProvider";
 
 export class AutocompleteController {
     private _disposable: vscode.Disposable
@@ -33,17 +36,28 @@ export class AutocompleteController {
 
         vscode.commands.registerCommand('symfony-vscode.goToServiceDefinition', (args) => {
             if(args && args instanceof ServiceDefinitionTreeItem) {
-                let serviceDefinition = args.serviceDefinition
-                let location = confFileServiveDefinitionProvider.getLocationOfService(serviceDefinition)
-                if(location) {
-                    vscode.window.showTextDocument(location.uri, {
-                        selection: location.range
-                    })
-                } else {
-                    vscode.window.showErrorMessage("Class \"" + serviceDefinition.className + "\" not found")
-                }
+                this._goToServiceDefinition(args.serviceDefinition, confFileServiveDefinitionProvider)
+            } else {
+                vscode.window.showQuickPick(containerStore.serviceDefinitionList.map(serviceDefinition => {
+                    return new ServiceQuickPickItem(serviceDefinition)
+                })).then(item => {
+                    if(item instanceof ServiceQuickPickItem) {
+                        this._goToServiceDefinition(item.serviceDefinition, confFileServiveDefinitionProvider)
+                    }
+                })
             }
         })
+    }
+
+    protected _goToServiceDefinition(serviceDefinition: ServiceDefinition, serviceDefinitionProvider: AbstractServiceDefinitionProvider) {
+        let location = serviceDefinitionProvider.getLocationOfService(serviceDefinition)
+        if(location) {
+            vscode.window.showTextDocument(location.uri, {
+                selection: location.range
+            })
+        } else {
+            vscode.window.showErrorMessage("Class \"" + serviceDefinition.className + "\" not found")
+        }
     }
 
     dispose() {
