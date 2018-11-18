@@ -4,6 +4,7 @@ export class PHPClass {
     public className: string
     public documentUri: vscode.Uri
     public methods: string[] = []
+    public classPosition: vscode.Position
     protected _classNameArray: string[] = []
 
     public constructor(className: string, documentUri: vscode.Uri) {

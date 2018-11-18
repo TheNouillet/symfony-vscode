@@ -12,9 +12,21 @@ interface PHPParser {
 
 interface PHPParser_Item {
     kind: string
+    loc: PHPParser_Location
     name?: string | PHPParser_Item
     children?: Array<PHPParser_Item>
     body?: Array<PHPParser_Item>
+}
+
+interface PHPParser_Location {
+    start: PHPParser_Position
+    end: PHPParser_Position
+}
+
+interface PHPParser_Position {
+    line: number
+    column: number
+    offset: number
 }
 
 export class ParserPHPClassProvider implements PHPClassProviderInterface {
@@ -25,6 +37,9 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
         this._engine = new engine({
             parser: {
                 php7: true
+            },
+            ast: {
+              withPositions: true
             }
         })
     }
@@ -81,6 +96,9 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
                                     phpClass.addMethod(<string>(<PHPParser_Item>classElement.name).name)
                                 }
                             })
+                            phpClass.classPosition = new vscode.Position(
+                                namespaceElement.loc.start.line, namespaceElement.loc.start.column
+                            )
                             result = phpClass
                         }
                     })

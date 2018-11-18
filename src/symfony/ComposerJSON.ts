@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-import * as fs from "fs"
+import * as fs from "graceful-fs"
 
 export class ComposerJSON {
 

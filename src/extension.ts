@@ -43,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
         context.subscriptions.push(fileWatchController)
     }
 
-    let autocompleteController = new AutocompleteController(containerStore)
+    let autocompleteController = new AutocompleteController(containerStore, phpClassStore)
     context.subscriptions.push(autocompleteController)
 
     let serviceDocCodeActionProvider = new ServiceDocumentationCodeActionProvider()
