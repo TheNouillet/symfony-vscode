@@ -34,7 +34,7 @@ A: You have to tell the extension to do console commands via shell to your docke
 ```json
 {
     "symfony-vscode.shellExecutable": "/bin/bash",
-    "symfony-vscode.shellCommand": "docker exec my_container_id /bin/sh -c 'cd /path/to/symfony && php \"$@\"' -- "
+    "symfony-vscode.shellCommand": "docker exec my_container_id /bin/sh -c 'cd /path/to/symfony && php $@' -- "
 }
 ```
 
