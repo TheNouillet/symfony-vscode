@@ -3,6 +3,7 @@ import { PHPClassProviderInterface } from "./PHPClassProviderInterface"
 import { PHPClass } from "../PHPClass"
 import engine from 'php-parser'
 import { readFile } from "graceful-fs";
+import { PromiseUtils } from "../PromiseUtils";
 
 interface PHPParser {
     parseEval(code: String|Buffer): PHPParser_Item
@@ -32,6 +33,7 @@ interface PHPParser_Position {
 export class ParserPHPClassProvider implements PHPClassProviderInterface {
 
     protected _engine: PHPParser
+    protected _configuration = vscode.workspace.getConfiguration("symfony-vscode")
 
     constructor() {
         this._engine = new engine({
@@ -46,12 +48,12 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
 
     updateAllClasses(): Promise<PHPClass[]> {
         return new Promise((resolve, reject) => {
-            let promises: Promise<PHPClass>[] = []
             vscode.workspace.findFiles("**/*.php").then(uris => {
+                let ps = []
                 uris.forEach(uri => {
-                    promises.push(this.updateClass(uri))
+                    ps.push(() => this.updateClass(uri))
                 })
-                Promise.all(promises).then(phpClasses => {
+                PromiseUtils.throttleActions(ps, this._getParserThrottle()).then(phpClasses => {
                     resolve(phpClasses.filter((phpClass => {
                         return phpClass !== null
                     })))
@@ -106,5 +108,9 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
         } catch (e) {
             return null
         }
+    }
+
+    private _getParserThrottle(): number {
+        return this._configuration.get("phpParserThrottle")
     }
 }

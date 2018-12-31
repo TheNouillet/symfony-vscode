@@ -23,7 +23,7 @@
             "activitybar": [
                 {
                     "id": "symfonyViewsContainer",
-                    "title": "Symfony debug",
+                    "title": "Symfony container view",
                     "icon": "media/logo.svg"
                 }
             ]
@@ -273,6 +273,11 @@
                         "_class$"
                     ],
                     "description": "Filter out parameters entirely when their ids match one of the given regexes."
+                },
+                "symfony-vscode.phpParserThrottle": {
+                    "type": "number",
+                    "default": 256,
+                    "description": "Maximum number of process capable of Ereading PHP files. Too much processes can block file reading of other extensions and programs"
                 }
             }
         }
