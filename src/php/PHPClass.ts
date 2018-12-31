@@ -28,4 +28,16 @@ export class PHPClass {
     get shortClassName(): string {
         return this._classNameArray[this._classNameArray.length - 1]
     }
+
+    static fromJSON(jsonPhpClass: PHPClass): PHPClass {
+        let uri = vscode.Uri.file(jsonPhpClass.documentUri.path)
+        let position = new vscode.Position(jsonPhpClass.classPosition.line, jsonPhpClass.classPosition.character)
+        let phpClass = new PHPClass(jsonPhpClass.className, uri)
+        phpClass.classPosition = position
+        jsonPhpClass.methods.forEach(method => {
+            phpClass.addMethod(method)
+        })
+
+        return phpClass
+    }
 }

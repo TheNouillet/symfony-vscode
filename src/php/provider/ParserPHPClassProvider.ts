@@ -46,6 +46,14 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
         })
     }
 
+    canUpdateAllClasses(): boolean {
+        return true
+    }
+
+    canUpdateClass(uri: vscode.Uri): boolean {
+        return true
+    }
+
     updateAllClasses(): Promise<PHPClass[]> {
         return new Promise((resolve, reject) => {
             vscode.workspace.findFiles("**/*.php").then(uris => {

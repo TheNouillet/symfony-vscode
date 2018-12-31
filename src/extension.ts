@@ -19,7 +19,7 @@ import { PHPClassStore } from './php/PHPClassStore';
 export function activate(context: vscode.ExtensionContext) {
     
     let containerStore = new ContainerStore()
-    let phpClassStore = new PHPClassStore()
+    let phpClassStore = new PHPClassStore(context)
     const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
     const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
     const parameterViewProvider = new ParameterViewProvider()
