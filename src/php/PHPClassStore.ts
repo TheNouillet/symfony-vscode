@@ -13,9 +13,9 @@ export class PHPClassStore {
     private static PHP_CLASS_FETCH_MESSAGE = "Fetching PHP classes..."
     private static PHP_CLASS_NO_PROVIDER = "Cannot retrieve PHP classes at the moment"
 
-    constructor(context: vscode.ExtensionContext) {
-        this._cacheManager = new PHPClassCacheManager(context.workspaceState)
-        this._phpClassProviders.push(new CachePHPClassProvider(this._cacheManager))
+    constructor(cacheManager: PHPClassCacheManager) {
+        this._cacheManager = cacheManager
+        this._phpClassProviders.push(new CachePHPClassProvider(cacheManager))
         this._phpClassProviders.push(new ParserPHPClassProvider())
     }
 

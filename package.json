@@ -137,6 +137,11 @@
                 "command": "symfony-vscode.togglePathDisplay",
                 "title": "Toggle path/id display for routes",
                 "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.refreshPHPClasses",
+                "title": "Reindex PHP classes",
+                "category": "Symfony"
             }
         ],
         "menus": {

@@ -21,11 +21,11 @@ export class PHPClassCacheManager {
         })
     }
 
-    set(phpClasses: PHPClass[]): void {
-        this._memento.update(PHPClassCacheManager.CACHE_KEY, phpClasses)
+    set(phpClasses: PHPClass[]): Thenable<void> {
+        return this._memento.update(PHPClassCacheManager.CACHE_KEY, phpClasses)
     }
 
-    clear(): void {
-        this._memento.update(PHPClassCacheManager.CACHE_KEY, undefined)
+    clear(): Thenable<void> {
+        return this._memento.update(PHPClassCacheManager.CACHE_KEY, undefined)
     }
 }
