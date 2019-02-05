@@ -2,6 +2,8 @@
 
 This extension aims to help developing Symfony2+ projects, by showing services and routes of your current project, and provide autocompletion support with these datas.
 
+It was created by [TheNouillet](https://github.com/TheNouillet/symfony-vscode).
+
 ## Features
 
 This extension add a new view, the *Symfony Debug View*, to visualize the status of your project container and routes. With this, you can :
@@ -14,7 +16,7 @@ This extension also enable autocompletion in YAML files to reference services.
 
 ## How does it works ?
 
-To detect Symfony projects, this extension rely on `composer.json` files with `symfony/symfony` as one of its dependencies.
+To detect Symfony projects, this extension rely on `composer.json` files with `symfony/symfony` or `symfony/lts` as one of its dependencies.
 
 The `composer.json` file is supposed to be at the root of your Symfony project.
 

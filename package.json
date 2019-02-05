@@ -1,11 +1,11 @@
 {
-    "name": "symfony-vscode",
-    "displayName": "Symfony for VSCode",
-    "description": "Debug and autocomplete of Symfony container",
-    "version": "0.0.3",
-    "publisher": "TheNouillet",
+    "name": "vscode-symfony",
+    "displayName": "Symfony debug and autocomplete",
+    "description": "Debug and autocomplete for Symfony (original code from TheNouillet)",
+    "version": "0.0.4",
+    "publisher": "n4zim",
     "repository": {
-        "url": "https://github.com/TheNouillet/symfony-vscode"
+        "url": "https://github.com/n4zim/vscode-symfony"
     },
     "engines": {
         "vscode": "^1.25.0"
