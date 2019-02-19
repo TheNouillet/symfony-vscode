@@ -1,16 +1,14 @@
-# Symfony for VS Code
+# Symfony for VSCode
 
-This extension aims to help developing Symfony2+ projects, by showing services and routes of your current project, and provide autocompletion support with these datas.
+This extension aims to help developing Symfony2+ projects, by providing basic autocompletion and visualization of the Symfony container.
 
 ## Features
 
-This extension add a new view, the *Symfony Debug View*, to visualize the status of your project container and routes. With this, you can :
-* know which controller action is binded to a route
-* know which class is binded to a service
-* see all services aliases
-* ...
-
-This extension also enable autocompletion in YAML files to reference services.
+This extension provides the following features :
+* Autocompletion in YML and XML files of services and parameters
+* Hover details on services and parameters name
+* Go to implementation of a service
+* A custom view to visualize the current project container, with services, routes and parameters
 
 ## How does it works ?
 
@@ -20,11 +18,17 @@ The `composer.json` file is supposed to be at the root of your Symfony project.
 
 When the project is detected, it simply uses the `debug:container` and `debug:router` console commands to hydrate the views and autocompletions.
 
-## Extension Settings
+## Extension settings
 
-This extension contributes the following settings:
-
-* TODO
+Here are the settings that can be overridden for convenience :
+* `phpExecutablePath`: Path to the PHP executable. This path is ignored if the `shellExecutable` parameter is different than false (default value : `/usr/bin/php`).
+* `shellExecutable`: The shell executable path. If differant that false, console commands will be called via shell instead of just calling the PHP executable. Useful for particular setup, such as Dockerized projects (default value : `false`).
+* `shellCommand`: The shell command. Only used when calling the shell to do console commands. Useful for particular setup, such as Dockerized projects (default value : `false`).
+* `consolePath`: Path to the Symfony console, relative to the root directeory. If null, the extension try to guess the path with the Symfony version from the composer.json file (default value : `null`).
+* `showConsoleErrors`: If false, the extension doesn't show error messages caused by compilation errors (default value : `true`).
+* `enableFileWatching`: If false, the extension refresh automatically when a YAML file is modified (default value : `true`).
+* `fileWatchingPatterns`: Files with one of these extensions will trigger a container refresh on save. By default, watches only `*.yml` and `*.xml` files.
+* `servicesFilters`, `routesFilters` and `parametersFilters` : Filters out container elements. Filtered elements doesn't show in the Symfony view, nor does they appear in autocompletion.
 
 ## Troubleshooting
 
