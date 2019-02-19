@@ -2,6 +2,8 @@
 
 This extension aims to help developing Symfony2+ projects, by providing basic autocompletion and visualization of the Symfony container.
 
+![Autocomplete](media/autocomplete.gif)
+
 ## Features
 
 This extension provides the following features :
@@ -9,6 +11,8 @@ This extension provides the following features :
 * Hover details on services and parameters name
 * Go to implementation of a service
 * A custom view to visualize the current project container, with services, routes and parameters
+
+![Debug view](media/view.gif)
 
 ## How does it works ?
 
