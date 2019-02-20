@@ -20,9 +20,9 @@ import { PHPClassCacheManager } from './php/PHPClassCacheManager';
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
     
+    let phpClassCacheManager = new PHPClassCacheManager(context.workspaceState)
     let containerStore = new ContainerStore()
-    let cacheManager = new PHPClassCacheManager(context.workspaceState)
-    let phpClassStore = new PHPClassStore(cacheManager)
+    let phpClassStore = new PHPClassStore(phpClassCacheManager)
     const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
     const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
     const parameterViewProvider = new ParameterViewProvider()
@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
     containerStore.subscribeListerner(serviceDocCodeActionProvider)
     vscode.languages.registerCodeActionsProvider({scheme: "file", language: "php"}, serviceDocCodeActionProvider)
 
-    let phpClassesController = new PHPClassesController(phpClassStore, cacheManager)
+    let phpClassesController = new PHPClassesController(phpClassStore, phpClassCacheManager)
 
     containerStore.refreshAll(() => {
         phpClassStore.refreshAll()

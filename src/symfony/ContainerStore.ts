@@ -2,7 +2,6 @@ import * as vscode from "vscode"
 import { ServiceDefinition } from "./ServiceDefinition";
 import { ContainerProviderInterface } from "./provider/ContainerProviderInterface";
 import { ConsoleProvider } from "./provider/ConsoleProvider";
-import { DummyProvider } from "./provider/DummyProvider";
 import { RouteDefinition } from "./RouteDefinition";
 import { Parameter } from "./Parameter";
 import { AbstractContainerStoreListener } from "./AbstractContainerStoreListener";
@@ -18,6 +17,7 @@ export class ContainerStore {
     private static ROUTES_FETCH_MESSAGE = "Fetching Symfony routes definitions..."
     private static PARAMETERS_FETCH_MESSAGE = "Fetching Symfony parameters..."
 
+    // TODO: Refactor to Promise instead of callback
     refreshAll(cb?: () => void): void {
         vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: ContainerStore.SERVICES_FETCH_MESSAGE }, (progress, token) => {
             return this._containerProvider.provideServiceDefinitions().then(servicesDefinitions => {
