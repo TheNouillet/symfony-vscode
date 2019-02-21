@@ -34,17 +34,13 @@ Here are the settings that can be overridden for convenience :
 * `fileWatchingPatterns`: Files with one of these extensions will trigger a container refresh on save. By default, watches only `*.yml` and `*.xml` files.
 * `servicesFilters`, `routesFilters` and `parametersFilters` : Filters out container elements. Filtered elements doesn't show in the Symfony view, nor does they appear in autocompletion.
 
-## Troubleshooting
+## Various environments
 
-Q: I run my Symfony project on Docker. How do I configure the extension ?
+If your Symfony app is not running on a conventional installation (for example, you are running a Symfony app on a Docker container), you can find different configuration recipes [here](ENVIRONMENTS.md).
 
-A: You have to tell the extension to do console commands via shell to your docker container, like this :
-```json
-{
-    "symfony-vscode.shellExecutable": "/bin/bash",
-    "symfony-vscode.shellCommand": "docker exec my_container_id /bin/sh -c 'cd /path/to/symfony && php \"$@\"' -- "
-}
-```
+## Contribution
+
+If you want to contribute to this extension, everything you want to know is [here](CONTRIBUTING.md).
 
 ## Release Notes
 
