@@ -2,6 +2,11 @@
 
 ## 1.0.0
 
+* Added a "Go to definition" on services in YAML, XML and PHP files
+    * PHP files are now parsed
+* Container elements and PHP files are now cached
+    * Startup is now way faster on existing projects
+    * Commands and file modification invalidates caches.
 * Console command calls are now asynchronous
     * The extension usage with Docker or others shell-based environments has been changed, via the addition of `shellExecutable` and `shellCommand` parameters.
 * Added the `parametersFilters` setting to filter out parameters, such as classes.
