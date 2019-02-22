@@ -14,7 +14,7 @@ export class ServiceDefinition implements Searchable {
     }
 
     public isServiceIdAClassName(): boolean {
-        return this.id.match(/^(?:\\{1,2}\w+|\w+\\{1,2})(?:\w+\\{0,2}\w+)+$/) !== null
+        return this.id.match(/([A-Z]|\\)/) !== null
     }
 
     public acceptSearchCriteria(criteria: string): number {
@@ -28,5 +28,11 @@ export class ServiceDefinition implements Searchable {
             return 1
         }
         return 0
+    }
+
+    static fromJSON(jsonServiceDefinition: ServiceDefinition): ServiceDefinition {
+        return new ServiceDefinition(
+            jsonServiceDefinition.id, jsonServiceDefinition.className, jsonServiceDefinition.public, jsonServiceDefinition.alias
+        )
     }
 }

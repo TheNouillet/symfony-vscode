@@ -10,7 +10,9 @@ export class RoutesCommandController {
         this._containerStore = containerStore
         this._routeDefinitionViewProvider = routeDefintionViewProvider
 
-        vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitions', () => this._containerStore.refreshRouteDefinitions())
+        vscode.commands.registerCommand('symfony-vscode.refreshRouteDefinitions', () => {
+            this._containerStore.clearCacheAndRefreshRoutes()
+        })
         vscode.commands.registerCommand('symfony-vscode.togglePathDisplay', () => this._routeDefinitionViewProvider.togglePathsDisplay())
         vscode.commands.registerCommand('symfony-vscode.searchForRoutes', () => {
             vscode.window.showInputBox({

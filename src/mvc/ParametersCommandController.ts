@@ -10,7 +10,9 @@ export class ParametersCommandController {
         this._containerStore = containerStore
         this._parameterViewProvider = parameterViewProvider
 
-        vscode.commands.registerCommand('symfony-vscode.refreshParameters', () => this._containerStore.refreshParameters())
+        vscode.commands.registerCommand('symfony-vscode.refreshParameters', () => {
+            this._containerStore.clearCacheAndRefreshParameters()
+        })
         vscode.commands.registerCommand('symfony-vscode.searchForParameters', () => {
             vscode.window.showInputBox({
                 prompt: "Criteria (e.g. \"app\", \"doctrine\" ...)",

@@ -10,7 +10,9 @@ export class ServicesCommandController {
         this._containerStore = containerStore
         this._serviceDefinitionViewProvider = serviceDefinitionViewProvider
 
-        vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitions', () => this._containerStore.refreshServiceDefinitions())
+        vscode.commands.registerCommand('symfony-vscode.refreshServiceDefinitions', () => {
+            this._containerStore.clearCacheAndRefreshServices()
+        })
         vscode.commands.registerCommand('symfony-vscode.toggleClassDisplay', () => this._serviceDefinitionViewProvider.toggleClassDisplay())
         vscode.commands.registerCommand('symfony-vscode.searchForServices', () => {
             vscode.window.showInputBox({

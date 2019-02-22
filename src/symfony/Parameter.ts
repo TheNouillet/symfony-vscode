@@ -31,4 +31,8 @@ export class Parameter implements Searchable {
         }
         return 0
     }
+
+    static fromJSON(jsonParameter: Parameter): Parameter {
+        return new Parameter(jsonParameter.name, jsonParameter.value)
+    }
 }

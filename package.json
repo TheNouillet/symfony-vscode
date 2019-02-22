@@ -23,7 +23,7 @@
             "activitybar": [
                 {
                     "id": "symfonyViewsContainer",
-                    "title": "Symfony debug",
+                    "title": "Symfony container view",
                     "icon": "media/logo.svg"
                 }
             ]
@@ -66,6 +66,15 @@
                 "icon": {
                     "light": "media/light/cancel.svg",
                     "dark": "media/dark/cancel.svg"
+                }
+            },
+            {
+                "command": "symfony-vscode.goToServiceDefinition",
+                "title": "Go to service definition",
+                "category": "Symfony",
+                "icon": {
+                    "light": "media/light/goto.svg",
+                    "dark": "media/dark/goto.svg"
                 }
             },
             {
@@ -128,6 +137,11 @@
                 "command": "symfony-vscode.togglePathDisplay",
                 "title": "Toggle path/id display for routes",
                 "category": "Symfony"
+            },
+            {
+                "command": "symfony-vscode.refreshPHPClasses",
+                "title": "Reindex PHP classes",
+                "category": "Symfony"
             }
         ],
         "menus": {
@@ -188,6 +202,11 @@
                     "command": "symfony-vscode.clearParametersSearch",
                     "when": "viewItem == symfony-vscode.searchItem.parameter",
                     "group": "inline"
+                },
+                {
+                    "command": "symfony-vscode.goToServiceDefinition",
+                    "when": "viewItem == symfony-vscode.service",
+                    "group": "inline"
                 }
             ]
         },
@@ -210,7 +229,10 @@
                     "description": "The shell command. Only used when calling the shell to do console commands."
                 },
                 "symfony-vscode.consolePath": {
-                    "type": ["string", "null"],
+                    "type": [
+                        "string",
+                        "null"
+                    ],
                     "default": null,
                     "description": "Path to the Symfony console, relative to the root directeory. If null, the extension try to guess the path with the Symfony version from the composer.json file"
                 },
@@ -256,6 +278,11 @@
                         "_class$"
                     ],
                     "description": "Filter out parameters entirely when their ids match one of the given regexes."
+                },
+                "symfony-vscode.phpParserThrottle": {
+                    "type": "number",
+                    "default": 256,
+                    "description": "Maximum number of process capable of Ereading PHP files. Too much processes can block file reading of other extensions and programs"
                 }
             }
         }
@@ -268,9 +295,13 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
+        "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6"
+    },
+    "dependencies": {
+        "graceful-fs": "^4.1.15",
+        "php-parser": "^3.0.0-prerelease.7"
     }
 }
