@@ -29,4 +29,10 @@ export class ServiceDefinition implements Searchable {
         }
         return 0
     }
+
+    static fromJSON(jsonServiceDefinition: ServiceDefinition): ServiceDefinition {
+        return new ServiceDefinition(
+            jsonServiceDefinition.id, jsonServiceDefinition.className, jsonServiceDefinition.public, jsonServiceDefinition.alias
+        )
+    }
 }

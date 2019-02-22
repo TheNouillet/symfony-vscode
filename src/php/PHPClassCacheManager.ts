@@ -28,4 +28,16 @@ export class PHPClassCacheManager {
     clear(): Thenable<void> {
         return this._memento.update(PHPClassCacheManager.CACHE_KEY, undefined)
     }
+
+    clearClassByUri(phpClassUri: vscode.Uri): Thenable<void> {
+        let classes = this.get()
+        let newClasses = []
+        classes.forEach(phpClass => {
+            if(phpClass.documentUri !== phpClassUri) {
+                newClasses.push(phpClass)
+            }
+        });
+
+        return this.set(newClasses)
+    }
 }

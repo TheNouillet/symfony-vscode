@@ -25,4 +25,10 @@ export class RouteDefinition implements Searchable {
         }
         return 0
     }
+
+    static fromJSON(jsonRouteDefinition: RouteDefinition): RouteDefinition {
+        return new RouteDefinition(
+            jsonRouteDefinition.id, jsonRouteDefinition.path, jsonRouteDefinition.method, jsonRouteDefinition.action
+        )
+    }
 }

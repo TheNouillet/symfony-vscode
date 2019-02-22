@@ -15,13 +15,15 @@ import { ParametersCommandController } from './mvc/ParametersCommandController';
 import { PHPClassStore } from './php/PHPClassStore';
 import { PHPClassesController } from './mvc/PHPClassesController';
 import { PHPClassCacheManager } from './php/PHPClassCacheManager';
+import { ContainerCacheManager } from './symfony/ContainerCacheManager';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
     
     let phpClassCacheManager = new PHPClassCacheManager(context.workspaceState)
-    let containerStore = new ContainerStore()
+    let containerCacheManager = new ContainerCacheManager(context.workspaceState)
+    let containerStore = new ContainerStore(containerCacheManager)
     let phpClassStore = new PHPClassStore(phpClassCacheManager)
     const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
     const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
@@ -30,7 +32,9 @@ export function activate(context: vscode.ExtensionContext) {
     containerStore.subscribeListerner(routeDefinitionViewProvider)
     containerStore.subscribeListerner(parameterViewProvider)
 
-    vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => containerStore.refreshAll())
+    vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => {
+        containerStore.clearCacheAndRefreshAll()
+    })
 
     vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
     let servicesCommandController = new ServicesCommandController(containerStore, serviceDefinitionViewProvider)
@@ -53,9 +57,9 @@ export function activate(context: vscode.ExtensionContext) {
     containerStore.subscribeListerner(serviceDocCodeActionProvider)
     vscode.languages.registerCodeActionsProvider({scheme: "file", language: "php"}, serviceDocCodeActionProvider)
 
-    let phpClassesController = new PHPClassesController(phpClassStore, phpClassCacheManager)
+    let phpClassesController = new PHPClassesController(phpClassStore)
 
-    containerStore.refreshAll(() => {
+    containerStore.refreshAll().then(() => {
         phpClassStore.refreshAll()
     })
 }

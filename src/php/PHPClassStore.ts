@@ -43,6 +43,12 @@ export class PHPClassStore {
         }
     }
 
+    clearCacheAndRefreshAll(): void {
+        this._cacheManager.clear().then(() => {
+            this.refreshAll()
+        })
+    }
+
     refresh(uri: vscode.Uri): void {
         let hasValidProvider = this._phpClassProviders.some(provider => {
             if(provider.canUpdateClass(uri)) {
@@ -59,6 +65,12 @@ export class PHPClassStore {
         if(!hasValidProvider) {
             vscode.window.showErrorMessage(PHPClassStore.PHP_CLASS_NO_PROVIDER)
         }
+    }
+
+    clearCacheAndRefresh(uri: vscode.Uri): void {
+        this._cacheManager.clearClassByUri(uri).then(() => {
+            this.refresh(uri)
+        })
     }
 
     getPhpClass(className: string): PHPClass {

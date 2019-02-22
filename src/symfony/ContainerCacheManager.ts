@@ -28,15 +28,21 @@ export class ContainerCacheManager {
     }
 
     getServices(): ServiceDefinition[] {
-        return this._memento.get<ServiceDefinition[]>(ContainerCacheManager.SERVICES_CACHE_KEY)
+        return this._memento.get<ServiceDefinition[]>(ContainerCacheManager.SERVICES_CACHE_KEY).map(jsonServiceDefinition => {
+            return ServiceDefinition.fromJSON(jsonServiceDefinition)
+        })
     }
 
     getRoutes(): RouteDefinition[] {
-        return this._memento.get<RouteDefinition[]>(ContainerCacheManager.ROUTES_CACHE_KEY)
+        return this._memento.get<RouteDefinition[]>(ContainerCacheManager.ROUTES_CACHE_KEY).map(jsonRouteDefinition => {
+            return RouteDefinition.fromJSON(jsonRouteDefinition)
+        })
     }
 
     getParameters(): Parameter[] {
-        return this._memento.get<Parameter[]>(ContainerCacheManager.PARAMETERS_CACHE_KEY)
+        return this._memento.get<Parameter[]>(ContainerCacheManager.PARAMETERS_CACHE_KEY).map(jsonParameter => {
+            return Parameter.fromJSON(jsonParameter)
+        })
     }
 
     setServices(servicesDefinitions: ServiceDefinition[]): Thenable<void> {

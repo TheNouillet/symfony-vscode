@@ -16,10 +16,10 @@ export class FileWatchController {
         let subscriptions: vscode.Disposable[] = []
         vscode.workspace.onDidSaveTextDocument(e => {
             if(e.fileName.match(fileNameRegExp)) {
-                this._containerStore.refreshAll()
+                this._containerStore.clearCacheAndRefreshAll()
             }
             if(e.fileName.match(/\.php$/)) {
-                this._phpClassStore.refresh(e.uri)
+                this._phpClassStore.clearCacheAndRefresh(e.uri)
             }
         }, this, subscriptions)
 

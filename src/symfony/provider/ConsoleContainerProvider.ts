@@ -8,10 +8,22 @@ import { ComposerJSON } from "../ComposerJSON";
 import { RouteDefinition } from "../RouteDefinition";
 import { Parameter } from "../Parameter";
 
-export class ConsoleProvider implements ContainerProviderInterface {
-
+export class ConsoleContainerProvider implements ContainerProviderInterface {
+    
     private _configuration = vscode.workspace.getConfiguration("symfony-vscode")
     private _composerJson: ComposerJSON = new ComposerJSON()
+    
+    canProvideServiceDefinitions(): boolean {
+        return true
+    }
+
+    canProvideRouteDefinitions(): boolean {
+        return true
+    }
+
+    canProvideParameters(): boolean {
+        return true
+    }
 
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
         return this._executeCommand<ServiceDefinition>(["debug:container", "--show-private"], (obj) => {
