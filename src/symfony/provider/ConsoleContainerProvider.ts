@@ -141,6 +141,8 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
                         resolve([])
                     }
                 }
+            }).catch(reason => {
+                reject(reason)
             })
         })
     }
