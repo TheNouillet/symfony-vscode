@@ -22,9 +22,9 @@ export class PHPClassStore {
     refreshAll(): void {
         this._phpClassesIndex.clear()
         let hasValidProvider = this._phpClassProviders.some(provider => {
-            if(provider.canUpdateAllClasses()) {
+            if(provider.canUpdateAllUris()) {
                 vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: PHPClassStore.PHP_CLASS_FETCH_MESSAGE }, (progress, token) => {
-                    return provider.updateAllClasses().then(phpClasses => {
+                    return provider.updateAllUris().then(phpClasses => {
                         phpClasses.forEach(phpClass => {
                             this._phpClassesIndex.set(phpClass.className, phpClass)
                         })
@@ -51,9 +51,11 @@ export class PHPClassStore {
 
     refresh(uri: vscode.Uri): void {
         let hasValidProvider = this._phpClassProviders.some(provider => {
-            if(provider.canUpdateClass(uri)) {
-                provider.updateClass(uri).then(phpClass => {
-                    this._phpClassesIndex.set(phpClass.className, phpClass)
+            if(provider.canUpdateUri(uri)) {
+                provider.updateUri(uri).then(phpClasses => {
+                    phpClasses.forEach(phpClass => {
+                        this._phpClassesIndex.set(phpClass.className, phpClass)
+                    })
                 })
                 let phpClasses = Array.from(this._phpClassesIndex.values())
                 this._cacheManager.set(phpClasses)

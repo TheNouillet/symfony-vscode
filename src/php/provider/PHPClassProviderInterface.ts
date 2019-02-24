@@ -2,8 +2,8 @@ import * as vscode from "vscode"
 import { PHPClass } from "../PHPClass";
 
 export interface PHPClassProviderInterface {
-    canUpdateAllClasses(): boolean
-    canUpdateClass(uri: vscode.Uri): boolean
-    updateAllClasses(): Promise<PHPClass[]>
-    updateClass(uri: vscode.Uri): Promise<PHPClass>
+    canUpdateAllUris(): boolean
+    canUpdateUri(uri: vscode.Uri): boolean
+    updateAllUris(): Promise<PHPClass[]>
+    updateUri(uri: vscode.Uri): Promise<PHPClass[]>
 }

@@ -13,15 +13,15 @@ export class CachePHPClassProvider implements PHPClassProviderInterface {
         this._cacheManager = cacheManager
     }
 
-    canUpdateAllClasses(): boolean {
+    canUpdateAllUris(): boolean {
         return this._cacheManager.hasCachedData()
     }
 
-    canUpdateClass(uri: vscode.Uri): boolean {
+    canUpdateUri(uri: vscode.Uri): boolean {
         return false
     }
     
-    updateAllClasses(): Promise<PHPClass[]> {
+    updateAllUris(): Promise<PHPClass[]> {
         return new Promise<PHPClass[]>((resolve, reject) => {
             if(this._cacheManager.hasCachedData()) {
                 resolve(this._cacheManager.get())
@@ -31,9 +31,9 @@ export class CachePHPClassProvider implements PHPClassProviderInterface {
         })
     }
 
-    updateClass(uri: vscode.Uri): Promise<PHPClass> {
-        return new Promise<PHPClass>((resolve) => {
-            resolve(null)
+    updateUri(uri: vscode.Uri): Promise<PHPClass[]> {
+        return new Promise<PHPClass[]>((resolve) => {
+            resolve([])
         })
     }
 }

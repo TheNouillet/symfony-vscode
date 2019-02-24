@@ -46,25 +46,30 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
         })
     }
 
-    canUpdateAllClasses(): boolean {
+    canUpdateAllUris(): boolean {
         return true
     }
 
-    canUpdateClass(uri: vscode.Uri): boolean {
+    canUpdateUri(uri: vscode.Uri): boolean {
         return true
     }
 
-    updateAllClasses(): Promise<PHPClass[]> {
+    updateAllUris(): Promise<PHPClass[]> {
         return new Promise((resolve, reject) => {
             vscode.workspace.findFiles("**/*.php").then(uris => {
                 let ps = []
                 uris.forEach(uri => {
-                    ps.push(() => this.updateClass(uri))
+                    ps.push(() => this.updateUri(uri))
                 })
-                PromiseUtils.throttleActions(ps, this._getParserThrottle()).then(phpClasses => {
-                    resolve(phpClasses.filter((phpClass => {
-                        return phpClass !== null
-                    })))
+                PromiseUtils.throttleActions(ps, this._getParserThrottle()).then(phpClassesArray => {
+                    let resultArray: PHPClass[] = []
+                    phpClassesArray.map(phpClasses => {
+                        let filteredArray: PHPClass[] = phpClasses.filter(phpClass => {
+                            return phpClass !== null
+                        })
+                        resultArray = resultArray.concat(filteredArray)
+                    })
+                    resolve(resultArray)
                 }).catch(reason => {
                     reject(reason)
                 })
@@ -72,26 +77,26 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
         })
     }
 
-    updateClass(uri: vscode.Uri): Promise<PHPClass> {
-        return new Promise<PHPClass>((resolve) => {
+    updateUri(uri: vscode.Uri): Promise<PHPClass[]> {
+        return new Promise<PHPClass[]>((resolve) => {
             readFile(uri.path, (err, data) => {
                 if(err) {
-                    resolve(null)
+                    resolve([])
                 } else {
                     try {
                         let ast = this._engine.parseCode(data.toString())
                         resolve(this._hydratePHPClass(ast, uri))
                     } catch(e) {
-                        resolve(null)
+                        resolve([])
                     }
                 }
             })
         })
     }
 
-    protected _hydratePHPClass(ast: PHPParser_Item, uri: vscode.Uri): PHPClass {
+    protected _hydratePHPClass(ast: PHPParser_Item, uri: vscode.Uri): PHPClass[] {
         try {
-            let result: PHPClass = null
+            let result: PHPClass[] = []
             let children: Array<PHPParser_Item> = ast.children
             children.forEach(rootElement => {
                 if(rootElement.kind === "namespace") {
@@ -107,14 +112,25 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
                             phpClass.classPosition = new vscode.Position(
                                 namespaceElement.loc.start.line, namespaceElement.loc.start.column
                             )
-                            result = phpClass
+                            result.push(phpClass)
                         }
                     })
+                } else if (rootElement.kind === "class" || rootElement.kind === "interface") {
+                    let phpClass: PHPClass = new PHPClass((<string>rootElement.name), uri)
+                    rootElement.body.forEach(classElement => {
+                        if(classElement.kind === "method") {
+                            phpClass.addMethod(<string>(<PHPParser_Item>classElement.name).name)
+                        }
+                    })
+                    phpClass.classPosition = new vscode.Position(
+                        rootElement.loc.start.line, rootElement.loc.start.column
+                    )
+                    result.push(phpClass)
                 }
             })
             return result
         } catch (e) {
-            return null
+            return []
         }
     }
 
