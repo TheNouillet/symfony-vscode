@@ -3,12 +3,15 @@ import { ServiceDefinition } from "../../../symfony/ServiceDefinition";
 import { AbstractContainerStoreListener } from "../../../symfony/AbstractContainerStoreListener";
 import { EditingUtils } from "../EditingUtils";
 import { ServiceDocumentationCodeAction } from "./ServiceDocumentationCodeAction";
+import { PHPClassStore } from "../../../php/PHPClassStore";
 
 export class ServiceDocumentationCodeActionProvider extends AbstractContainerStoreListener implements vscode.CodeActionProvider {
     private _servicesDefinitionsList: ServiceDefinition[] = []
+    private _phpClassStore: PHPClassStore
 
-    constructor() {
+    constructor(phpClassStore: PHPClassStore) {
         super()
+        this._phpClassStore = phpClassStore
     }
 
     onServicesChanges(servicesDefinitionList: ServiceDefinition[]) {
@@ -21,8 +24,20 @@ export class ServiceDocumentationCodeActionProvider extends AbstractContainerSto
         if(range instanceof vscode.Selection) {
             let potentialServiceRange = EditingUtils.getWordRange(document, range.active)
             let potentialServiceName = document.getText(potentialServiceRange)
+            let use = this._phpClassStore.getUsesForUri(document.uri).find(use => {
+                return potentialServiceName == use.shortName
+            })
             let serviceDefinition = this._servicesDefinitionsList.find(serviceDefinition => {
-                return potentialServiceName === serviceDefinition.id
+                if(potentialServiceName === serviceDefinition.id) {
+                    return true
+                } else if (potentialServiceName === serviceDefinition.className && potentialServiceName !== "") {
+                    return true
+                } else if (use !== undefined && use.className === serviceDefinition.className){
+                    return true
+                } else if (use !== undefined && use.className === serviceDefinition.id){
+                    return true
+                }
+                return false
             });
             if(serviceDefinition !== undefined) {
                 return [new ServiceDocumentationCodeAction(document, potentialServiceRange, serviceDefinition)]

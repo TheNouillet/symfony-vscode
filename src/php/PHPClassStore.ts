@@ -4,11 +4,13 @@ import { PHPClassProviderInterface } from "./provider/PHPClassProviderInterface"
 import { ParserPHPClassProvider } from "./provider/ParserPHPClassProvider";
 import { CachePHPClassProvider } from "./provider/CachePHPClassProvider";
 import { PHPClassCacheManager } from "./PHPClassCacheManager";
+import { PHPUse } from "./PHPUse";
 
 export class PHPClassStore {
     protected _cacheManager: PHPClassCacheManager
     protected _phpClassProviders: PHPClassProviderInterface[] = []
     protected _phpClassesIndex: Map<string, PHPClass> = new Map<string, PHPClass>()
+    protected _phpUsesIndex: Map<string, PHPUse[]> = new Map<string, PHPUse[]>()
 
     private static PHP_CLASS_FETCH_MESSAGE = "Fetching PHP classes..."
     private static PHP_CLASS_NO_PROVIDER = "Cannot retrieve PHP classes at the moment"
@@ -27,6 +29,9 @@ export class PHPClassStore {
                     return provider.updateAllUris().then(phpClasses => {
                         phpClasses.forEach(phpClass => {
                             this._phpClassesIndex.set(phpClass.className, phpClass)
+                            if(phpClass.uses.length > 0) {
+                                this._phpUsesIndex.set(phpClass.documentUri.fsPath, phpClass.uses)
+                            }
                         })
                         this._cacheManager.set(phpClasses)
                     }).catch(reason => {
@@ -55,6 +60,9 @@ export class PHPClassStore {
                 provider.updateUri(uri).then(phpClasses => {
                     phpClasses.forEach(phpClass => {
                         this._phpClassesIndex.set(phpClass.className, phpClass)
+                        if(phpClass.uses.length > 0) {
+                            this._phpUsesIndex.set(phpClass.documentUri.fsPath, phpClass.uses)
+                        }
                     })
                 })
                 let phpClasses = Array.from(this._phpClassesIndex.values())
@@ -77,5 +85,9 @@ export class PHPClassStore {
 
     getPhpClass(className: string): PHPClass {
         return this._phpClassesIndex.get(className)
+    }
+
+    getUsesForUri(uri: vscode.Uri): PHPUse[] {
+        return this._phpUsesIndex.get(uri.fsPath)
     }
 }

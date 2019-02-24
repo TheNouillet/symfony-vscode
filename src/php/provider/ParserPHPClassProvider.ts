@@ -4,6 +4,7 @@ import { PHPClass } from "../PHPClass"
 import engine from 'php-parser'
 import { readFile } from "graceful-fs";
 import { PromiseUtils } from "../PromiseUtils";
+import { PHPUse } from "../PHPUse";
 
 interface PHPParser {
     parseEval(code: String|Buffer): PHPParser_Item
@@ -16,7 +17,14 @@ interface PHPParser_Item {
     loc: PHPParser_Location
     name?: string | PHPParser_Item
     children?: Array<PHPParser_Item>
+    items?: Array<PHPParser_UseItem>
     body?: Array<PHPParser_Item>
+}
+
+interface PHPParser_UseItem {
+    kind: string
+    name: string
+    alias?: string
 }
 
 interface PHPParser_Location {
@@ -98,40 +106,59 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
         try {
             let result: PHPClass[] = []
             let children: Array<PHPParser_Item> = ast.children
-            children.forEach(rootElement => {
-                if(rootElement.kind === "namespace") {
-                    let namespace = <string>rootElement.name
-                    rootElement.children.forEach(namespaceElement => {
-                        if(namespaceElement.kind === "class" || namespaceElement.kind === "interface") {
-                            let phpClass: PHPClass = new PHPClass(namespace + '\\' + (<string>namespaceElement.name), uri)
-                            namespaceElement.body.forEach(classElement => {
-                                if(classElement.kind === "method") {
-                                    phpClass.addMethod(<string>(<PHPParser_Item>classElement.name).name)
-                                }
-                            })
-                            phpClass.classPosition = new vscode.Position(
-                                namespaceElement.loc.start.line, namespaceElement.loc.start.column
-                            )
-                            result.push(phpClass)
-                        }
-                    })
-                } else if (rootElement.kind === "class" || rootElement.kind === "interface") {
-                    let phpClass: PHPClass = new PHPClass((<string>rootElement.name), uri)
-                    rootElement.body.forEach(classElement => {
-                        if(classElement.kind === "method") {
-                            phpClass.addMethod(<string>(<PHPParser_Item>classElement.name).name)
-                        }
-                    })
-                    phpClass.classPosition = new vscode.Position(
-                        rootElement.loc.start.line, rootElement.loc.start.column
-                    )
-                    result.push(phpClass)
+            let nextElementsToProcess: Array<PHPParser_Item> = children
+            let currentElement: PHPParser_Item = null
+            let currentNamespace: String = null
+            let uses: PHPUse[] = []
+            while(nextElementsToProcess.length > 0) {
+                currentElement = nextElementsToProcess.shift()
+                if(currentElement.kind === "namespace") {
+                    currentNamespace = <string>currentElement.name
+                    nextElementsToProcess = currentElement.children
                 }
+                if(currentElement.kind === "usegroup") {
+                    uses = uses.concat(this._processUseGroup(currentElement))
+                }
+                if(currentElement.kind === "class" || currentElement.kind === "interface") {
+                    result.push(this._processClass(currentElement, uri, currentNamespace))
+                }
+            }
+
+            result.forEach(phpClass => {
+                phpClass.uses = uses
             })
+
             return result
         } catch (e) {
             return []
         }
+    }
+
+    protected _processClass(element: PHPParser_Item, uri: vscode.Uri, namespace?: String): PHPClass {
+        let fullName = <string>element.name
+        if(namespace) {
+            fullName = namespace + '\\' + fullName
+        }
+        let phpClass = new PHPClass(fullName, uri)
+        element.body.forEach(classElement => {
+            if(classElement.kind === "method") {
+                phpClass.addMethod(<string>(<PHPParser_Item>classElement.name).name)
+            }
+        })
+        phpClass.classPosition = new vscode.Position(
+            element.loc.start.line, element.loc.start.column
+        )
+        return phpClass
+    }
+
+    protected _processUseGroup(element: PHPParser_Item): PHPUse[] {
+        let result: PHPUse[] = []
+
+        element.items.forEach(item => {
+            result.push(new PHPUse(item.name, item.alias))
+        })
+
+        return result
     }
 
     private _getParserThrottle(): number {

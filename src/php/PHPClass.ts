@@ -1,10 +1,12 @@
 import * as vscode from "vscode"
+import { PHPUse } from "./PHPUse";
 
 export class PHPClass {
     public className: string
     public documentUri: vscode.Uri
     public methods: string[] = []
     public classPosition: vscode.Position
+    public uses: PHPUse[] = []
     protected _classNameArray: string[] = []
 
     public constructor(className: string, documentUri: vscode.Uri) {
@@ -36,6 +38,9 @@ export class PHPClass {
         phpClass.classPosition = position
         jsonPhpClass.methods.forEach(method => {
             phpClass.addMethod(method)
+        })
+        jsonPhpClass.uses.forEach(use => {
+            phpClass.uses.push(new PHPUse(use.className, use.alias))
         })
 
         return phpClass

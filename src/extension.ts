@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
     let autocompleteController = new AutocompleteController(containerStore, phpClassStore)
     context.subscriptions.push(autocompleteController)
 
-    let serviceDocCodeActionProvider = new ServiceDocumentationCodeActionProvider()
+    let serviceDocCodeActionProvider = new ServiceDocumentationCodeActionProvider(phpClassStore)
     containerStore.subscribeListerner(serviceDocCodeActionProvider)
     vscode.languages.registerCodeActionsProvider({scheme: "file", language: "php"}, serviceDocCodeActionProvider)
 
