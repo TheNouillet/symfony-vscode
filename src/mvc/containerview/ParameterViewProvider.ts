@@ -1,58 +1,33 @@
-import * as vscode from "vscode"
-import { ContainerStore } from "../../symfony/ContainerStore";
 import { Parameter } from "../../symfony/Parameter";
+import { AbstractContainerViewProvider } from "./AbstractContainerViewProvider";
+import { AbstractContainerTreeItem } from "./AbstractContainerTreeItem";
 import { ParameterTreeItem } from "./ParameterTreeItem";
 
-export class ParameterViewProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
-    private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined> = new vscode.EventEmitter<vscode.TreeItem | undefined>();
-    readonly onDidChangeTreeData: vscode.Event<vscode.TreeItem | undefined> = this._onDidChangeTreeData.event;
-    private _containerStore: ContainerStore
+export class ParameterViewProvider extends AbstractContainerViewProvider {
+    private _parameters: Parameter[] = []
 
-    constructor(containerStore: ContainerStore) {
-        this._containerStore = containerStore
-        this.refresh()
+    constructor() {
+        super()
     }
 
-    refresh(): void {
-        vscode.window.withProgress({location: vscode.ProgressLocation.Window, title: "Symfony is refreshing..."}, (progress, token) => {
-            return this._containerStore.refreshParameters().then(() => {
-                this._onDidChangeTreeData.fire()
-            }).catch(reason => {
-                vscode.window.showErrorMessage(reason)
-            })
-        })
+    onParametersChanges(parameters: Parameter[]) {
+        this._parameters = parameters
+        this._onDidChangeTreeData.fire()
     }
 
-    getTreeItem(element: vscode.TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
-        return element
-    }
+    getTreeItems(): AbstractContainerTreeItem[] {
+        let treeItems: ParameterTreeItem[] = []
 
-    getChildren(element?: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem[]> {
-        return new Promise(resolve => {
-            if (!element) {
-                let parameters: Parameter[] = this._containerStore.parameterList
-                let result: vscode.TreeItem[] = []
-
-                parameters.forEach(parameter => {
-                    result.push(new ParameterTreeItem(parameter))
-                });
-                result.sort((a, b) => {
-                    if(a.label < b.label) {
-                        return -1
-                    }
-                    if(a.label > b.label) {
-                        return 1
-                    }
-                    return 0
-                })
-                resolve(result)
-            } else {
-                if(element instanceof ParameterTreeItem) {
-                    resolve(element.childrenItems)
-                } else {
-                    resolve([])
-                }
+        this._parameters.forEach(parameter => {
+            if(this.acceptSearchable(parameter)) {
+                treeItems.push(new ParameterTreeItem(parameter))
             }
-        })
+        });
+
+        return treeItems
+    }
+
+    protected _getSearchItemContext(): string {
+        return 'symfony-vscode.searchItem.parameter'
     }
 }

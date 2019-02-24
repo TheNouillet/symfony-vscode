@@ -1,4 +1,6 @@
-export class ServiceDefinition {
+import { Searchable } from "./Searchable";
+
+export class ServiceDefinition implements Searchable {
     public id: string
     public className: string
     public public: boolean
@@ -12,6 +14,25 @@ export class ServiceDefinition {
     }
 
     public isServiceIdAClassName(): boolean {
-        return this.id.match(/^(?:\\{1,2}\w+|\w+\\{1,2})(?:\w+\\{0,2}\w+)+$/) !== null
+        return this.id.match(/([A-Z]|\\)/) !== null
+    }
+
+    public acceptSearchCriteria(criteria: string): number {
+        if(this.id && this.id.match(criteria)) {
+            return 2
+        }
+        if(this.className && this.className.match(criteria)) {
+            return 2
+        }
+        if(this.alias && this.alias.match(criteria)) {
+            return 1
+        }
+        return 0
+    }
+
+    static fromJSON(jsonServiceDefinition: ServiceDefinition): ServiceDefinition {
+        return new ServiceDefinition(
+            jsonServiceDefinition.id, jsonServiceDefinition.className, jsonServiceDefinition.public, jsonServiceDefinition.alias
+        )
     }
 }
