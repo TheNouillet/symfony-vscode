@@ -2,6 +2,9 @@
 
 ## 1.0.0
 
+* Added a "Include PHPDoc tag for Symfony service" code action
+    * This code action allows you to include a `@var` PHPDoc tag on the line above a recognized service name
+    * This acts as a way to provide autocompletion of a service obtained via a ContainerInterface object (such as `$this->get('logger')` in a controller for example)
 * Added a "Go to definition" on services in YAML, XML and PHP files
     * PHP files are now parsed
 * Container elements and PHP files are now cached
@@ -9,11 +12,11 @@
     * Commands and file modification invalidates caches.
 * Console command calls are now asynchronous
     * The extension usage with Docker or others shell-based environments has been changed, via the addition of `shellExecutable` and `shellCommand` parameters.
+* Added a search functionnality on services, routes and parameters views.
 * Added the `parametersFilters` setting to filter out parameters, such as classes.
 * Added the `routesFilters` setting to filter out routes, such as Assetic routes.
     * Let know in the repository issues if default filters aren't pertinent enough ! I made them according to my work habbits, but each project is different.
 * Errors messages now display only once when refreshing services, routes and parameters (i.e. at extension startup or configuration file modification)
-* Added a search functionnality on services, routes and parameters views.
 
 ## 0.0.3 [08-06-2018]
 
