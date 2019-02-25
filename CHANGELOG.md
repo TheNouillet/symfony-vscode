@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.0.0
+## 1.0.0 [02-25-2019]
 
 * Added a "Include PHPDoc tag for Symfony service" code action
     * This code action allows you to include a `@var` PHPDoc tag on the line above a recognized service name
