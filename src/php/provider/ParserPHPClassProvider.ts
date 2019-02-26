@@ -87,7 +87,7 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
 
     updateUri(uri: vscode.Uri): Promise<PHPClass[]> {
         return new Promise<PHPClass[]>((resolve) => {
-            readFile(uri.path, (err, data) => {
+            readFile(uri.fsPath, (err, data) => {
                 if(err) {
                     resolve([])
                 } else {
@@ -135,7 +135,12 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
     }
 
     protected _processClass(element: PHPParser_Item, uri: vscode.Uri, namespace?: String): PHPClass {
-        let fullName = <string>element.name
+        let fullName = null
+        if(typeof element.name === "object") {
+            fullName = <string>element.name.name
+        } else if(typeof element.name === "string") {
+            fullName = element.name
+        }
         if(namespace) {
             fullName = namespace + '\\' + fullName
         }
