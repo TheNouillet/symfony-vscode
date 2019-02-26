@@ -2,7 +2,7 @@
     "name": "symfony-vscode",
     "displayName": "Symfony for VSCode",
     "description": "Debug and autocomplete of Symfony container",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "TheNouillet",
     "repository": {
         "url": "https://github.com/TheNouillet/symfony-vscode"
@@ -282,7 +282,7 @@
                 "symfony-vscode.phpParserThrottle": {
                     "type": "number",
                     "default": 256,
-                    "description": "Maximum number of process capable of Ereading PHP files. Too much processes can block file reading of other extensions and programs"
+                    "description": "Maximum number of process capable of reading PHP files. Too much processes can block file reading of other extensions and programs"
                 }
             }
         }

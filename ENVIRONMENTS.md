@@ -2,6 +2,17 @@
 
 This file sums up settings to put in your VSCode, so that the extension can work and help you developping your Symfony projects.
 
+## Windows
+
+You have to change the PHP path if you're working on Windows :
+
+```json
+{
+    "symfony-vscode.phpExecutablePath": "c:\\xampp\\php\\php.exe"
+}
+```
+
+
 ## Docker
 
 [Docker](https://www.docker.com/) is used to perform containerization.
