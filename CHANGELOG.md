@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.0.1 [02-26-2019]
+
+* [#31](https://github.com/TheNouillet/symfony-vscode/pull/31) Fix parsing of files not working on Windows (thank you [smertelny](https://github.com/smertelny) !)
+* Fix of command console failure when the console output has comments in it
+* Fix PHP parsing not working
+
 ## 1.0.0 [02-25-2019]
 
 * Added a "Include PHPDoc tag for Symfony service" code action
