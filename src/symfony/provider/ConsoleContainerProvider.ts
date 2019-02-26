@@ -1,5 +1,6 @@
 import * as vscode from "vscode"
 import * as path from "path"
+import * as jsonStripComments from "strip-json-comments"
 
 import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
@@ -123,7 +124,7 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
                             }
                         } else {
                             try {
-                                let obj = JSON.parse(buffer)
+                                let obj = JSON.parse(jsonStripComments(buffer))
                                 resolve(cb(obj))
                             } catch (e) {
                                 if (this._showErrors) {

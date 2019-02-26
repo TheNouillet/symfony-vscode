@@ -87,7 +87,7 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
 
     updateUri(uri: vscode.Uri): Promise<PHPClass[]> {
         return new Promise<PHPClass[]>((resolve) => {
-            readFile(uri.path, (err, data) => {
+            readFile(uri.fsPath, (err, data) => {
                 if(err) {
                     resolve([])
                 } else {
