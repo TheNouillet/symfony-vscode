@@ -13,7 +13,7 @@ export class ComposerJSON {
                     reject("No composer.json file detected in the current workspace")
                 } else {
                     uris.forEach(uri => {
-                        let composerObj = JSON.parse(fs.readFileSync(uri.path).toString())
+                        let composerObj = JSON.parse(fs.readFileSync(uri.fsPath).toString())
                         if(composerObj.require !== undefined) {
                             Object.keys(composerObj.require).forEach(key => {
                                 if(key === "symfony/symfony" || key == "symfony/framework-bundle") {
