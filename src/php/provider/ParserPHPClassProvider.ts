@@ -135,7 +135,12 @@ export class ParserPHPClassProvider implements PHPClassProviderInterface {
     }
 
     protected _processClass(element: PHPParser_Item, uri: vscode.Uri, namespace?: String): PHPClass {
-        let fullName = <string>element.name
+        let fullName = null
+        if(typeof element.name === "object") {
+            fullName = <string>element.name.name
+        } else if(typeof element.name === "string") {
+            fullName = element.name
+        }
         if(namespace) {
             fullName = namespace + '\\' + fullName
         }
