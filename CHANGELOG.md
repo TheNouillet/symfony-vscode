@@ -4,6 +4,7 @@
 
 * [#31](https://github.com/TheNouillet/symfony-vscode/pull/31) Fix parsing of files not working on Windows (thank you [smertelny](https://github.com/smertelny) !)
 * Fix of command console failure when the console output has comments in it
+* Fix PHP parsing not working
 
 ## 1.0.0 [02-25-2019]
 
