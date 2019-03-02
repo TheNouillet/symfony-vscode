@@ -5,15 +5,19 @@ import * as jsonStripComments from "strip-json-comments"
 import { ContainerProviderInterface } from "./ContainerProviderInterface";
 import { ServiceDefinition } from "../ServiceDefinition";
 import { spawn, SpawnOptions } from "child_process";
-import { ComposerJSON } from "../ComposerJSON";
 import { RouteDefinition } from "../RouteDefinition";
 import { Parameter } from "../Parameter";
+import { ComposerDependency } from "../composer/ComposerDependency";
 
 export class ConsoleContainerProvider implements ContainerProviderInterface {
     
+    private _symfonyDep: ComposerDependency
     private _configuration = vscode.workspace.getConfiguration("symfony-vscode")
-    private _composerJson: ComposerJSON = new ComposerJSON()
     
+    constructor(symfonyDep: ComposerDependency) {
+        this._symfonyDep = symfonyDep
+    }
+
     canProvideServiceDefinitions(): boolean {
         return true
     }
@@ -150,27 +154,25 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
 
     private _getConsolePath(): Promise<{ consolePath: string, cwd: string }> {
         return new Promise((resolve, reject) => {
-            this._composerJson.initialize().then(infos => {
-                let customConsolePath = this._configuration.get("consolePath")
-                let consolePath: string = ""
-                if (customConsolePath) {
-                    consolePath = customConsolePath + " "
-                } else {
-                    switch (infos.symfonyVersion) {
-                        case 2:
-                            consolePath = "app/console"
-                            break;
-                        case 3:
-                        default:
-                            consolePath = "bin/console"
-                            break;
-                    }
+            let customConsolePath = this._configuration.get("consolePath")
+            let consolePath: string = ""
+            if (customConsolePath) {
+                consolePath = customConsolePath + " "
+            } else {
+                switch (this._symfonyDep.majorVersion) {
+                    case 2:
+                        consolePath = "app/console"
+                        break;
+                    case 3:
+                    default:
+                        consolePath = "bin/console"
+                        break;
                 }
-                resolve({
-                    consolePath: consolePath,
-                    cwd: path.dirname(infos.uri.fsPath)
-                })
-            }).catch(reason => reject(reason))
+            }
+            resolve({
+                consolePath: consolePath,
+                cwd: path.dirname(this._symfonyDep.uri.fsPath)
+            })
         })
     }
 

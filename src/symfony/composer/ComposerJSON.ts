@@ -1,10 +1,13 @@
 import * as vscode from "vscode"
 import * as fs from "graceful-fs"
 import * as stripJsonComments from "strip-json-comments";
+import { ComposerDependency } from "./ComposerDependency";
 
 export class ComposerJSON {
 
-    public initialize(): Promise<{symfonyVersion: number, uri: vscode.Uri}> {
+    protected _dependencies: ComposerDependency[] = []
+
+    public initialize(): Promise<ComposerJSON> {
         return new Promise((resolve, reject) => {
             if(vscode.workspace.workspaceFolders === undefined) {
                 reject("No workspace folder opened")
@@ -17,18 +20,19 @@ export class ComposerJSON {
                         let composerObj = JSON.parse(stripJsonComments(fs.readFileSync(uri.fsPath).toString()))
                         if(composerObj.require !== undefined) {
                             Object.keys(composerObj.require).forEach(key => {
-                                if(key === "symfony/symfony" || key == "symfony/framework-bundle") {
-                                    resolve({
-                                        symfonyVersion: parseInt(composerObj.require[key].match(/\d/)),
-                                        uri: uri
-                                    })
-                                }
+                                this._dependencies.push(new ComposerDependency(uri, key, composerObj.require[key]))
                             })
                         }
-                    });
-                    reject("No composer.json file wih Symfony as dependency detected")
+                    })
+                    resolve(this)
                 }
             })
+        })
+    }
+
+    public getSymfonyDependency(): ComposerDependency {
+        return this._dependencies.find(dep => {
+            return dep.isSymfonyFramework() || dep.isSymfonyDI()
         })
     }
 }

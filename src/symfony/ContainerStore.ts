@@ -7,9 +7,11 @@ import { Parameter } from "./Parameter";
 import { AbstractContainerStoreListener } from "./AbstractContainerStoreListener";
 import { ContainerCacheManager } from "./ContainerCacheManager";
 import { CacheContainerProvider } from "./provider/CacheContainerProvider";
+import { ComposerDependency } from "./composer/ComposerDependency";
 
 export class ContainerStore {
     private _cacheManager: ContainerCacheManager
+    private _symfonyDep: ComposerDependency
     private _containerProviders: ContainerProviderInterface[] = []
     private _serviceDefinitionStore: ServiceDefinition[] = []
     private _routeDefinitionStore: RouteDefinition[] = []
@@ -21,10 +23,11 @@ export class ContainerStore {
     private static PARAMETERS_FETCH_MESSAGE = "Fetching Symfony parameters..."
     private static CONTAINER_NO_PROVIDER = "Cannot retrieve container elements at the moment"
 
-    constructor(cacheManager: ContainerCacheManager) {
+    constructor(cacheManager: ContainerCacheManager, symfonyDep: ComposerDependency) {
         this._cacheManager = cacheManager
+        this._symfonyDep = symfonyDep
         this._containerProviders.push(new CacheContainerProvider(cacheManager))
-        this._containerProviders.push(new ConsoleContainerProvider())
+        this._containerProviders.push(new ConsoleContainerProvider(symfonyDep))
     }
 
     refreshAll(): Promise<void> {
