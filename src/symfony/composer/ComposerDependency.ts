@@ -13,6 +13,14 @@ export class ComposerDependency {
         "symfony/dependency-injection"
     ]
 
+    static SYMFONY_ROUTING_DEPS = [
+        "symfony/routing"
+    ]
+
+    static SYMFONY_CONSOLE_DEPS = [
+        "symfony/console"
+    ]
+
     public uri: vscode.Uri
     public dependencyName: string
     public version: string
@@ -37,5 +45,13 @@ export class ComposerDependency {
 
     public isSymfonyDI(): boolean {
         return ComposerDependency.SYMFONY_DI_DEPS.indexOf(this.dependencyName) !== -1
+    }
+
+    public isSymfonyRouting(): boolean {
+        return ComposerDependency.SYMFONY_ROUTING_DEPS.indexOf(this.dependencyName) !== -1
+    }
+
+    public isSymfonyConsole(): boolean {
+        return ComposerDependency.SYMFONY_CONSOLE_DEPS.indexOf(this.dependencyName) !== -1
     }
 }

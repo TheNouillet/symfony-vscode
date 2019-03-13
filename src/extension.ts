@@ -24,52 +24,47 @@ export function activate(context: vscode.ExtensionContext) {
     
     let composerJson = new ComposerJSON()
     composerJson.initialize().then(composerJson => {
-        let symfonyDep = composerJson.getSymfonyDependency()
-        if(symfonyDep) {
-            let phpClassCacheManager = new PHPClassCacheManager(context.workspaceState)
-            let containerCacheManager = new ContainerCacheManager(context.workspaceState)
-            let containerStore = new ContainerStore(containerCacheManager, symfonyDep)
-            let phpClassStore = new PHPClassStore(phpClassCacheManager)
-            const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
-            const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
-            const parameterViewProvider = new ParameterViewProvider()
-            containerStore.subscribeListerner(serviceDefinitionViewProvider)
-            containerStore.subscribeListerner(routeDefinitionViewProvider)
-            containerStore.subscribeListerner(parameterViewProvider)
-        
-            vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => {
-                containerStore.clearCacheAndRefreshAll()
-            })
-        
-            vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
-            let servicesCommandController = new ServicesCommandController(containerStore, serviceDefinitionViewProvider)
-        
-            vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
-            let routesCommandController = new RoutesCommandController(containerStore, routeDefinitionViewProvider)
-        
-            vscode.window.registerTreeDataProvider("parametersView", parameterViewProvider)
-            let parametersCommandController = new ParametersCommandController(containerStore, parameterViewProvider)
-        
-            if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
-                let fileWatchController = new FileWatchController(containerStore, phpClassStore)
-                context.subscriptions.push(fileWatchController)
-            }
-        
-            let autocompleteController = new AutocompleteController(containerStore, phpClassStore)
-            context.subscriptions.push(autocompleteController)
-        
-            let serviceDocCodeActionProvider = new ServiceDocumentationCodeActionProvider(phpClassStore)
-            containerStore.subscribeListerner(serviceDocCodeActionProvider)
-            vscode.languages.registerCodeActionsProvider({scheme: "file", language: "php"}, serviceDocCodeActionProvider)
-        
-            let phpClassesController = new PHPClassesController(phpClassStore)
-        
-            containerStore.refreshAll().then(() => {
-                phpClassStore.refreshAll()
-            })
-        } else {
-            vscode.window.showErrorMessage("No composer.json file with Symfony as dependency detected")
+        let phpClassCacheManager = new PHPClassCacheManager(context.workspaceState)
+        let containerCacheManager = new ContainerCacheManager(context.workspaceState)
+        let containerStore = new ContainerStore(containerCacheManager, composerJson)
+        let phpClassStore = new PHPClassStore(phpClassCacheManager)
+        const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
+        const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
+        const parameterViewProvider = new ParameterViewProvider()
+        containerStore.subscribeListerner(serviceDefinitionViewProvider)
+        containerStore.subscribeListerner(routeDefinitionViewProvider)
+        containerStore.subscribeListerner(parameterViewProvider)
+    
+        vscode.commands.registerCommand('symfony-vscode.refreshContainer', () => {
+            containerStore.clearCacheAndRefreshAll()
+        })
+    
+        vscode.window.registerTreeDataProvider("serviceDefinitionsView", serviceDefinitionViewProvider)
+        let servicesCommandController = new ServicesCommandController(containerStore, serviceDefinitionViewProvider)
+    
+        vscode.window.registerTreeDataProvider("routeDefinitionsView", routeDefinitionViewProvider)
+        let routesCommandController = new RoutesCommandController(containerStore, routeDefinitionViewProvider)
+    
+        vscode.window.registerTreeDataProvider("parametersView", parameterViewProvider)
+        let parametersCommandController = new ParametersCommandController(containerStore, parameterViewProvider)
+    
+        if(vscode.workspace.getConfiguration("symfony-vscode").get("enableFileWatching")) {
+            let fileWatchController = new FileWatchController(containerStore, phpClassStore)
+            context.subscriptions.push(fileWatchController)
         }
+    
+        let autocompleteController = new AutocompleteController(containerStore, phpClassStore)
+        context.subscriptions.push(autocompleteController)
+    
+        let serviceDocCodeActionProvider = new ServiceDocumentationCodeActionProvider(phpClassStore)
+        containerStore.subscribeListerner(serviceDocCodeActionProvider)
+        vscode.languages.registerCodeActionsProvider({scheme: "file", language: "php"}, serviceDocCodeActionProvider)
+    
+        let phpClassesController = new PHPClassesController(phpClassStore)
+    
+        containerStore.refreshAll().then(() => {
+            phpClassStore.refreshAll()
+        })
     }).catch(reason => {
         vscode.window.showErrorMessage(reason)
     })

@@ -7,11 +7,12 @@ import { Parameter } from "./Parameter";
 import { AbstractContainerStoreListener } from "./AbstractContainerStoreListener";
 import { ContainerCacheManager } from "./ContainerCacheManager";
 import { CacheContainerProvider } from "./provider/CacheContainerProvider";
-import { ComposerDependency } from "./composer/ComposerDependency";
+import { ComposerJSON } from "./composer/ComposerJSON";
+import { DumpContainerProvider } from "./provider/DumpContainerProvider";
 
 export class ContainerStore {
     private _cacheManager: ContainerCacheManager
-    private _symfonyDep: ComposerDependency
+    private _composerJson: ComposerJSON
     private _containerProviders: ContainerProviderInterface[] = []
     private _serviceDefinitionStore: ServiceDefinition[] = []
     private _routeDefinitionStore: RouteDefinition[] = []
@@ -23,11 +24,12 @@ export class ContainerStore {
     private static PARAMETERS_FETCH_MESSAGE = "Fetching Symfony parameters..."
     private static CONTAINER_NO_PROVIDER = "Cannot retrieve container elements at the moment"
 
-    constructor(cacheManager: ContainerCacheManager, symfonyDep: ComposerDependency) {
+    constructor(cacheManager: ContainerCacheManager, composerJson: ComposerJSON) {
         this._cacheManager = cacheManager
-        this._symfonyDep = symfonyDep
+        this._composerJson = composerJson
         this._containerProviders.push(new CacheContainerProvider(cacheManager))
-        this._containerProviders.push(new ConsoleContainerProvider(symfonyDep))
+        this._containerProviders.push(new DumpContainerProvider(composerJson))
+        this._containerProviders.push(new ConsoleContainerProvider(composerJson))
     }
 
     refreshAll(): Promise<void> {

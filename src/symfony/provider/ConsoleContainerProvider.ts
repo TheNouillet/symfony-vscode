@@ -7,53 +7,33 @@ import { ServiceDefinition } from "../ServiceDefinition";
 import { spawn, SpawnOptions } from "child_process";
 import { RouteDefinition } from "../RouteDefinition";
 import { Parameter } from "../Parameter";
-import { ComposerDependency } from "../composer/ComposerDependency";
+import { ComposerJSON } from "../composer/ComposerJSON";
+import { AbstractContainerProvider } from "./AbstractContainerProvider";
 
-export class ConsoleContainerProvider implements ContainerProviderInterface {
+export class ConsoleContainerProvider extends AbstractContainerProvider implements ContainerProviderInterface {
     
-    private _symfonyDep: ComposerDependency
-    private _configuration = vscode.workspace.getConfiguration("symfony-vscode")
+    private _composerJson: ComposerJSON
     
-    constructor(symfonyDep: ComposerDependency) {
-        this._symfonyDep = symfonyDep
+    constructor(composerJson: ComposerJSON) {
+        super()
+        this._composerJson = composerJson
     }
 
     canProvideServiceDefinitions(): boolean {
-        return true
+        return this._composerJson.getSymfonyDIDependency() !== undefined && this._composerJson.getSymfonyConsoleDependency() !== undefined
     }
 
     canProvideRouteDefinitions(): boolean {
-        return true
+        return this._composerJson.getSymfonyRoutingDependency() !== undefined && this._composerJson.getSymfonyConsoleDependency() !== undefined
     }
 
     canProvideParameters(): boolean {
-        return true
+        return this._composerJson.getSymfonyDIDependency() !== undefined && this._composerJson.getSymfonyConsoleDependency() !== undefined
     }
 
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
         return this._executeCommand<ServiceDefinition>(["debug:container", "--show-private"], (obj) => {
-            let result: ServiceDefinition[] = []
-            let collection: Object = {}
-
-            if (obj.definitions !== undefined) {
-                Object.keys(obj.definitions).forEach(key => {
-                    collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
-                })
-            }
-            if (obj.aliases !== undefined) {
-                Object.keys(obj.aliases).forEach(key => {
-                    let alias = obj.aliases[key].service
-                    let className = collection[alias] ? collection[alias].className : null
-                    collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
-                })
-            }
-            Object.keys(collection).forEach(key => {
-                if (!this._matchServicesFilters(collection[key].id, collection[key].className)) {
-                    result.push(collection[key])
-                }
-            });
-
-            return result
+            return this._parseServicesObject(obj)
         })
     }
 
@@ -73,15 +53,7 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
 
     provideParameters(): Promise<Parameter[]> {
         return this._executeCommand<Parameter>(["debug:container", "--parameters"], (obj) => {
-            let result: Parameter[] = []
-
-            Object.keys(obj).forEach(key => {
-                if (!this._matchParametersFilters(key)) {
-                    result.push(new Parameter(key, obj[key]))
-                }
-            })
-
-            return result
+            return this._parseParametersObject(obj)
         })
     }
 
@@ -154,12 +126,13 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
 
     private _getConsolePath(): Promise<{ consolePath: string, cwd: string }> {
         return new Promise((resolve, reject) => {
+            let symfonyDIDep = this._composerJson.getSymfonyDIDependency()
             let customConsolePath = this._configuration.get("consolePath")
             let consolePath: string = ""
             if (customConsolePath) {
                 consolePath = customConsolePath + " "
             } else {
-                switch (this._symfonyDep.majorVersion) {
+                switch (symfonyDIDep.majorVersion) {
                     case 2:
                         consolePath = "app/console"
                         break;
@@ -171,7 +144,7 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
             }
             resolve({
                 consolePath: consolePath,
-                cwd: path.dirname(this._symfonyDep.uri.fsPath)
+                cwd: symfonyDIDep.uri.fsPath
             })
         })
     }
@@ -190,36 +163,5 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
 
     private _showErrors(): boolean {
         return this._configuration.get("showConsoleErrors")
-    }
-
-    private _matchServicesFilters(serviceId: string, serviceClassName: string): boolean {
-        let filters: object = this._configuration.get("servicesFilters")
-        return Object.keys(filters).some(filter => {
-            if (filters[filter] === "id" && serviceId != null && serviceId.match(new RegExp(filter))) {
-                return true
-            } else if (filters[filter] === "class" && serviceClassName != null && serviceClassName.match(new RegExp(filter))) {
-                return true
-            }
-            return false
-        })
-    }
-
-    private _matchRoutesFilters(routeId: string, routePath: string): boolean {
-        let filters: object = this._configuration.get("routesFilters")
-        return Object.keys(filters).some(filter => {
-            if (filters[filter] === "id" && routeId != null && routeId.match(new RegExp(filter))) {
-                return true
-            } else if (filters[filter] === "path" && routePath != null && routePath.match(new RegExp(filter))) {
-                return true
-            }
-            return false
-        })
-    }
-
-    private _matchParametersFilters(parameterId: string): boolean {
-        let filters: Array<string> = this._configuration.get("parametersFilters")
-        return filters.some(filter => {
-            return parameterId != null && (parameterId.match(new RegExp(filter)) !== null)
-        })
     }
 }

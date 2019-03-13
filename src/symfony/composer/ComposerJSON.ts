@@ -1,5 +1,6 @@
 import * as vscode from "vscode"
 import * as fs from "graceful-fs"
+import * as path from "path"
 import * as stripJsonComments from "strip-json-comments";
 import { ComposerDependency } from "./ComposerDependency";
 
@@ -20,7 +21,7 @@ export class ComposerJSON {
                         let composerObj = JSON.parse(stripJsonComments(fs.readFileSync(uri.fsPath).toString()))
                         if(composerObj.require !== undefined) {
                             Object.keys(composerObj.require).forEach(key => {
-                                this._dependencies.push(new ComposerDependency(uri, key, composerObj.require[key]))
+                                this._dependencies.push(new ComposerDependency(vscode.Uri.file(path.dirname(uri.fsPath)), key, composerObj.require[key]))
                             })
                         }
                     })
@@ -30,9 +31,21 @@ export class ComposerJSON {
         })
     }
 
-    public getSymfonyDependency(): ComposerDependency {
+    public getSymfonyDIDependency(): ComposerDependency {
         return this._dependencies.find(dep => {
             return dep.isSymfonyFramework() || dep.isSymfonyDI()
+        })
+    }
+
+    public getSymfonyRoutingDependency(): ComposerDependency {
+        return this._dependencies.find(dep => {
+            return dep.isSymfonyFramework() || dep.isSymfonyRouting()
+        })
+    }
+
+    public getSymfonyConsoleDependency(): ComposerDependency {
+        return this._dependencies.find(dep => {
+            return dep.isSymfonyFramework() || dep.isSymfonyConsole()
         })
     }
 }

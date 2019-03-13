@@ -283,6 +283,14 @@
                     "type": "number",
                     "default": 256,
                     "description": "Maximum number of process capable of reading PHP files. Too much processes can block file reading of other extensions and programs"
+                },
+                "symfony-vscode.dumpFilePath": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Absolute path to the dependency injection dump file. If null, the extension try to guess the path with the Symfony version from the composer.json file"
                 }
             }
         }
@@ -302,7 +310,8 @@
     },
     "dependencies": {
         "graceful-fs": "^4.1.15",
+        "php-parser": "^3.0.0-prerelease.7",
         "strip-json-comments": "^2.0.1",
-        "php-parser": "^3.0.0-prerelease.7"
+        "xml2js": "^0.4.19"
     }
 }
