@@ -259,6 +259,7 @@
                     "type": "object",
                     "default": {
                         "[a-f0-9]{64}_[0-9]+": "id",
+                        "^[0-9].*": "id",
                         "~": "id",
                         "instanceof\\.": "id"
                     },
@@ -283,6 +284,11 @@
                     "type": "number",
                     "default": 256,
                     "description": "Maximum number of process capable of reading PHP files. Too much processes can block file reading of other extensions and programs"
+                },
+                "symfony-vscode.parseDumpFile": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "If true, parse the container dump file for services and parameters. If false, use the console (if possible)"
                 },
                 "symfony-vscode.dumpFilePath": {
                     "type": [

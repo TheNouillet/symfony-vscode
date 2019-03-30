@@ -4,8 +4,9 @@ import { RouteDefinition } from "../RouteDefinition";
 import { Parameter } from "../Parameter";
 import { ServiceDefinition } from "../ServiceDefinition";
 import { ContainerCacheManager } from "../ContainerCacheManager";
+import { AbstractContainerProvider } from "./AbstractContainerProvider";
 
-export class CacheContainerProvider implements ContainerProviderInterface {
+export class CacheContainerProvider extends AbstractContainerProvider implements ContainerProviderInterface {
     protected _cacheManager: ContainerCacheManager
 
     protected static NO_SERVICES_IN_CACHE = "No services in cache"
@@ -13,6 +14,7 @@ export class CacheContainerProvider implements ContainerProviderInterface {
     protected static NO_PARAMETERS_IN_CACHE = "No parameters in cache"
 
     constructor(cacheManager: ContainerCacheManager) {
+        super()
         this._cacheManager = cacheManager
     }
 
@@ -29,7 +31,16 @@ export class CacheContainerProvider implements ContainerProviderInterface {
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
         return new Promise<ServiceDefinition[]>((resolve, reject) => {
             if(this._cacheManager.hasCachedServices()) {
-                resolve(this._cacheManager.getServices())
+                let services = this._cacheManager.getServices()
+                let filteredServices = []
+
+                services.forEach(service => {
+                    if (!this._matchServicesFilters(service.id, service.className)) {
+                        filteredServices.push(service)
+                    }
+                })
+
+                resolve(filteredServices)
             } else {
                 reject(CacheContainerProvider.NO_SERVICES_IN_CACHE)
             }
@@ -38,7 +49,16 @@ export class CacheContainerProvider implements ContainerProviderInterface {
     provideRouteDefinitions(): Promise<RouteDefinition[]> {
         return new Promise<RouteDefinition[]>((resolve, reject) => {
             if(this._cacheManager.hasCachedRoutes()) {
-                resolve(this._cacheManager.getRoutes())
+                let routes = this._cacheManager.getRoutes()
+                let filteredRoutes = []
+
+                routes.forEach(route => {
+                    if(!this._matchRoutesFilters(route.id, route.path)) {
+                        filteredRoutes.push(route)
+                    }
+                })
+
+                resolve(filteredRoutes)
             } else {
                 reject(CacheContainerProvider.NO_ROUTES_IN_CACHE)
             }
@@ -47,7 +67,16 @@ export class CacheContainerProvider implements ContainerProviderInterface {
     provideParameters(): Promise<Parameter[]> {
         return new Promise<Parameter[]>((resolve, reject) => {
             if(this._cacheManager.hasCachedParameters()) {
-                resolve(this._cacheManager.getParameters())
+                let parameters = this._cacheManager.getParameters()
+                let filteredParameters = []
+
+                parameters.forEach(parameter => {
+                    if(!this._matchParametersFilters(parameter.name)) {
+                        filteredParameters.push(parameter)
+                    }
+                })
+
+                resolve(filteredParameters)
             } else {
                 reject(CacheContainerProvider.NO_PARAMETERS_IN_CACHE)
             }

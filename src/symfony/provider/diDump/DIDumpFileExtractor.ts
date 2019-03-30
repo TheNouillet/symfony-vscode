@@ -21,6 +21,9 @@ export class DIDumpFileExtractor {
     }
 
     getDIDumpFileUri(): vscode.Uri {
+        if(!this._canParseDumpFile()) {
+            return null
+        }
         if(this._getDIDumpFileConfiguration() && fs.existsSync(this._getDIDumpFileConfiguration())) {
             return vscode.Uri.file(this._getDIDumpFileConfiguration())
         } else if(vscode.workspace.workspaceFolders !== undefined) {
@@ -39,11 +42,13 @@ export class DIDumpFileExtractor {
                         break;
                 }
                 if(!fs.existsSync(diDep.uri.fsPath + relativePath)) {
-                    throw "Cannot find dependency injection dump file";
+                    vscode.window.showWarningMessage("Cannot find dependency injection dump file")
+                    return null
                 }
                 return vscode.Uri.file(diDep.uri.fsPath + relativePath)
             } else {
-                throw "Cannot find dependency injection dump file";
+                vscode.window.showWarningMessage("Cannot find dependency injection dump file")
+                return null
             }
         }
     }
@@ -80,6 +85,9 @@ export class DIDumpFileExtractor {
     }
     protected _getDIDumpFileConfiguration(): string {
         return this._configuration.get('dumpFilePath')
+    }
+    protected _canParseDumpFile(): boolean {
+        return this._configuration.get('parseDumpFile')
     }
     protected _getAdaptedParser(): DIDumpFileParserInterface {
         let adaptedParser: DIDumpFileParserInterface = null
