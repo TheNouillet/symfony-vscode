@@ -32,7 +32,7 @@ export class PHPClass {
     }
 
     static fromJSON(jsonPhpClass: PHPClass): PHPClass {
-        let uri = vscode.Uri.file(jsonPhpClass.documentUri.fsPath)
+        let uri = vscode.Uri.file(jsonPhpClass.documentUri.path)
         let position = new vscode.Position(jsonPhpClass.classPosition.line, jsonPhpClass.classPosition.character)
         let phpClass = new PHPClass(jsonPhpClass.className, uri)
         phpClass.classPosition = position

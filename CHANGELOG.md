@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.1.0
+
+* Services and parameters are now obtained by parsing the container dump file
+    * For most Symfony projects, this file is located in the cache
+    * **For now**, only XML files are supported
+    * If the `parseDumpFile` setting is set to false, services and parameters will be obtained via the console
+    * Routes are still using the console method, but a parsing method is on its way !
+* Container elements are correctly filtered when loading the extension
+* Fixed "Go to definition" for services not working without doing a reindex first
+
 ## 1.0.2 [02-27-2019]
 
 * Fixed the extension not starting at all
