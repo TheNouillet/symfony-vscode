@@ -12,10 +12,10 @@ export class DumpContainerProvider extends AbstractContainerProvider implements 
     private _composerJson: ComposerJSON
     private _extractor: DIDumpFileExtractor
     
-    constructor(composerJson: ComposerJSON) {
+    constructor(composerJson: ComposerJSON, dumpFileExtractor: DIDumpFileExtractor) {
         super()
         this._composerJson = composerJson
-        this._extractor = new DIDumpFileExtractor(composerJson)
+        this._extractor = dumpFileExtractor
     }
 
     canProvideServiceDefinitions(): boolean {

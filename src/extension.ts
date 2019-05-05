@@ -17,6 +17,8 @@ import { PHPClassesController } from './mvc/PHPClassesController';
 import { PHPClassCacheManager } from './php/PHPClassCacheManager';
 import { ContainerCacheManager } from './symfony/ContainerCacheManager';
 import { ComposerJSON } from './symfony/composer/ComposerJSON';
+import { DIDumpFileExtractor } from './symfony/provider/diDump/DIDumpFileExtractor';
+import { DumpFileWatchController } from './mvc/DumpFileWatchController';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -26,7 +28,8 @@ export function activate(context: vscode.ExtensionContext) {
     composerJson.initialize().then(composerJson => {
         let phpClassCacheManager = new PHPClassCacheManager(context.workspaceState)
         let containerCacheManager = new ContainerCacheManager(context.workspaceState)
-        let containerStore = new ContainerStore(containerCacheManager, composerJson)
+        let dumpFileExtractor = new DIDumpFileExtractor(composerJson)
+        let containerStore = new ContainerStore(containerCacheManager, composerJson, dumpFileExtractor)
         let phpClassStore = new PHPClassStore(phpClassCacheManager)
         const serviceDefinitionViewProvider = new ServiceDefintionViewProvider()
         const routeDefinitionViewProvider = new RouteDefinitionViewProvider()
@@ -55,6 +58,9 @@ export function activate(context: vscode.ExtensionContext) {
     
         let autocompleteController = new AutocompleteController(containerStore, phpClassStore)
         context.subscriptions.push(autocompleteController)
+
+        let dumpFileWatchController = new DumpFileWatchController(dumpFileExtractor, containerStore)
+        context.subscriptions.push(dumpFileWatchController)
     
         let serviceDocCodeActionProvider = new ServiceDocumentationCodeActionProvider(phpClassStore)
         containerStore.subscribeListerner(serviceDocCodeActionProvider)

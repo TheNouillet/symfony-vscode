@@ -9,6 +9,7 @@ import { ContainerCacheManager } from "./ContainerCacheManager";
 import { CacheContainerProvider } from "./provider/CacheContainerProvider";
 import { ComposerJSON } from "./composer/ComposerJSON";
 import { DumpContainerProvider } from "./provider/DumpContainerProvider";
+import { DIDumpFileExtractor } from "./provider/diDump/DIDumpFileExtractor";
 
 export class ContainerStore {
     private _cacheManager: ContainerCacheManager
@@ -23,10 +24,10 @@ export class ContainerStore {
     private static PARAMETERS_FETCH_MESSAGE = "Fetching Symfony parameters..."
     private static CONTAINER_NO_PROVIDER = "Cannot retrieve container elements at the moment"
 
-    constructor(cacheManager: ContainerCacheManager, composerJson: ComposerJSON) {
+    constructor(cacheManager: ContainerCacheManager, composerJson: ComposerJSON, dumpFileExtractor: DIDumpFileExtractor) {
         this._cacheManager = cacheManager
         this._containerProviders.push(new CacheContainerProvider(cacheManager))
-        this._containerProviders.push(new DumpContainerProvider(composerJson))
+        this._containerProviders.push(new DumpContainerProvider(composerJson, dumpFileExtractor))
         this._containerProviders.push(new ConsoleContainerProvider(composerJson))
     }
 
