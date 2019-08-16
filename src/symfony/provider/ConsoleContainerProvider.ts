@@ -88,6 +88,7 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
                 args.push(infos.consolePath)
                 args = args.concat(parameters)
                 args.push("--format=json")
+                args.push("--no-ansi")
 
                 let buffer: string = ""
                 let errorBuffer: string = ""
