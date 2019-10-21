@@ -17,7 +17,7 @@ This means that there are 2 types of issues :
 
 Note that if your Symfony app is not running on a conventionnal installation (Docker, Vagrant ...) and the extension is working with some settings tweak, you can contribute [this file](ENVIRONMENTS.md) to help other users to set up their IDE.
 
-## Developpement
+## Development
 
 ### Prerequisites
 
@@ -38,7 +38,7 @@ npm run compile
 
 ### Watching
 
-For developpement, it's easier to watch the files with :
+For development, it's easier to watch the files with :
 ```
 npm run watch
 ```
