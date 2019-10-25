@@ -15,7 +15,7 @@ This means that there are 2 types of issues :
 * The extension is not working (correctly or not at all) in your work environment. Please create an issue describing your OS, VSCode version, Symfony version, other installed extensions and the tool you'are working with (FPM, Apache PHP worker, Docker, Vagrant ...).
 * The extension lacks a feature that would improve productivity. Please create an issue with at least a minimum Symfony version.
 
-Note that if your Symfony app is not running on a conventionnal installation (Docker, Vagrant ...) and the extension is working with some settings tweak, you can contribute [this file](ENVIRONMENTS.md) to help other users to set up their IDE.
+Note that if your Symfony app is not running on a conventional installation (Docker, Vagrant ...) and the extension is working with some settings tweak, you can contribute [this file](ENVIRONMENTS.md) to help other users to set up their IDE.
 
 ## Development
 
