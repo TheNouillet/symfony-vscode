@@ -1,6 +1,6 @@
 # Settings for different environments
 
-This file sums up settings to put in your VSCode, so that the extension can work and help you developping your Symfony projects.
+This file sums up settings to put in your VSCode, so that the extension can work and help you developing your Symfony projects.
 
 ## Windows
 
