@@ -26,7 +26,7 @@ export class ComposerJSON {
                             })
                         }
                     });
-                    reject("No composer.json file wih Symfony as dependency detected")
+                    reject("No composer.json file with Symfony as dependency detected")
                 }
             })
         })
