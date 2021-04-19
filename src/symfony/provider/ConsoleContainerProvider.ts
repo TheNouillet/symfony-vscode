@@ -27,30 +27,38 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
     }
 
     provideServiceDefinitions(): Promise<ServiceDefinition[]> {
-        return this._executeCommand<ServiceDefinition>(["debug:container", "--show-private"], (obj) => {
-            let result: ServiceDefinition[] = []
-            let collection: Object = {}
+        return this._composerJson.initialize().then(infos => {
+                let parameters = ["debug:container"]
 
-            if (obj.definitions !== undefined) {
-                Object.keys(obj.definitions).forEach(key => {
-                    collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
-                })
-            }
-            if (obj.aliases !== undefined) {
-                Object.keys(obj.aliases).forEach(key => {
-                    let alias = obj.aliases[key].service
-                    let className = collection[alias] ? collection[alias].className : null
-                    collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
-                })
-            }
-            Object.keys(collection).forEach(key => {
-                if (!this._matchServicesFilters(collection[key].id, collection[key].className)) {
-                    result.push(collection[key])
+                if (infos.symfonyVersion < 5){
+                    parameters.push("--show-private")
                 }
-            });
-
-            return result
-        })
+                
+                return this._executeCommand<ServiceDefinition>(parameters, (obj) => {
+                    let result: ServiceDefinition[] = []
+                    let collection: Object = {}
+        
+                    if (obj.definitions !== undefined) {
+                        Object.keys(obj.definitions).forEach(key => {
+                            collection[key] = (new ServiceDefinition(key, obj.definitions[key].class, obj.definitions[key].public, null))
+                        })
+                    }
+                    if (obj.aliases !== undefined) {
+                        Object.keys(obj.aliases).forEach(key => {
+                            let alias = obj.aliases[key].service
+                            let className = collection[alias] ? collection[alias].className : null
+                            collection[key] = (new ServiceDefinition(key, className, obj.aliases[key].public, alias))
+                        })
+                    }
+                    Object.keys(collection).forEach(key => {
+                        if (!this._matchServicesFilters(collection[key].id, collection[key].className)) {
+                            result.push(collection[key])
+                        }
+                    });
+        
+                    return result
+                })
+            })
     }
 
     provideRouteDefinitions(): Promise<RouteDefinition[]> {
