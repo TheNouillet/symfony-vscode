@@ -298,7 +298,7 @@
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
         "typescript": "^2.6.1",
-        "vscode": "^1.1.6"
+        "vscode": "^1.1.37"
     },
     "dependencies": {
         "graceful-fs": "^4.1.15",
