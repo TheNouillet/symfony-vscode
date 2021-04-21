@@ -9,7 +9,7 @@ export class ComposerJSON {
             if(vscode.workspace.workspaceFolders === undefined) {
                 reject("No workspace folder opened")
             }
-            vscode.workspace.findFiles("**/composer.json").then(uris => {
+            vscode.workspace.findFiles("**/composer.json", "**/vendor/**").then(uris => {
                 if(uris.length == 0) {
                     reject("No composer.json file detected in the current workspace")
                 } else {
