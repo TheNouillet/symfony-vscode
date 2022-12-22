@@ -7,13 +7,7 @@ export class ConfigurationFileServiceCompletionItem extends vscode.CompletionIte
     constructor(serviceDefinition: ServiceDefinition) {
         super(serviceDefinition.id, vscode.CompletionItemKind.Reference)
         this._serviceDefinition = serviceDefinition
-    }
-
-    public get detail(): string {
-        return this._serviceDefinition.id
-    }
-
-    public get documentation(): string {
-        return "Of class " + this._serviceDefinition.className
+        this.detail = this._serviceDefinition.id;
+        this.documentation = "Of class " + this._serviceDefinition.className;
     }
 }

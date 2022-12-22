@@ -13,11 +13,13 @@ export class ServiceDefinitionTreeItem extends AbstractContainerTreeItem {
         super(displayClass ? serviceDefinition.className : serviceDefinition.id, vscode.TreeItemCollapsibleState.Collapsed)
         this.serviceDefinition = serviceDefinition
         this._displayClass = displayClass
+        this.tooltip = this.serviceDefinition.className;
+        this.contextValue = 'symfony-vscode.service';
     }
 
-    get tooltip(): string {
-        return this.serviceDefinition.className
-    }
+    // get tooltip(): string {
+    //     return this.serviceDefinition.className
+    // }
 
     get childrenItems(): vscode.TreeItem[] {
         let children: vscode.TreeItem[] = []
@@ -36,7 +38,4 @@ export class ServiceDefinitionTreeItem extends AbstractContainerTreeItem {
         return children
     }
 
-    get contextValue(): string {
-        return 'symfony-vscode.service'
-    }
 }

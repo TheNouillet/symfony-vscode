@@ -10,10 +10,7 @@ export class ParameterTreeItem extends AbstractContainerTreeItem {
     ) {
         super(parameter.name, vscode.TreeItemCollapsibleState.Collapsed)
         this._parameter = parameter
-    }
-
-    get tooltip() {
-        return this._parameter.value
+        this.tooltip = this._parameter.value;
     }
 
     get childrenItems(): vscode.TreeItem[] {

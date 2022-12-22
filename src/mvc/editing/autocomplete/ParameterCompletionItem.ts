@@ -7,13 +7,8 @@ export class ParameterCompletionItem extends vscode.CompletionItem {
     constructor(parameter: Parameter) {
         super(parameter.name, vscode.CompletionItemKind.Property)
         this.parameter = parameter
-    }
 
-    public get detail(): string {
-        return this.parameter.name
-    }
-
-    public get documentation(): string {
-        return "Of value : " + this.parameter.value
+        this.detail = this.parameter.name;
+        this.documentation = "Of value : " + this.parameter.value;
     }
 }

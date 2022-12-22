@@ -13,10 +13,7 @@ export class RouteDefinitionTreeItem extends AbstractContainerTreeItem {
         super(displayPath ? routeDefinition.path + " [" + routeDefinition.method + "]" : routeDefinition.id, vscode.TreeItemCollapsibleState.Collapsed)
         this._routeDefinition = routeDefinition
         this._displayPath = displayPath
-    }
-
-    get tooltip() {
-        return this._routeDefinition.path + " [" + this._routeDefinition.method + "]"
+        this.tooltip = this._routeDefinition.path + " [" + this._routeDefinition.method + "]";
     }
 
     get childrenItems(): vscode.TreeItem[] {
