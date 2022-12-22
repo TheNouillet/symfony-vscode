@@ -7,7 +7,7 @@ export class ComposerJSON {
     public async initialize(): Promise<{ symfonyVersion: number; uri: vscode.Uri; }> {
         
         if(vscode.workspace.workspaceFolders === undefined) {
-            //reject("No workspace folder opened")
+            throw new Error("No workspace folder opened")
         }
         let composerJsonList = await vscode.workspace.findFiles("**/composer.json");
         if (composerJsonList.length === 0) {

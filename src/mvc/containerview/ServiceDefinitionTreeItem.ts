@@ -17,10 +17,6 @@ export class ServiceDefinitionTreeItem extends AbstractContainerTreeItem {
         this.contextValue = 'symfony-vscode.service';
     }
 
-    // get tooltip(): string {
-    //     return this.serviceDefinition.className
-    // }
-
     get childrenItems(): vscode.TreeItem[] {
         let children: vscode.TreeItem[] = []
 
@@ -37,5 +33,4 @@ export class ServiceDefinitionTreeItem extends AbstractContainerTreeItem {
 
         return children
     }
-
 }

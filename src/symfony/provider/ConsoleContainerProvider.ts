@@ -175,8 +175,7 @@ export class ConsoleContainerProvider implements ContainerProviderInterface {
     }
 
     private _getPHPExecutablePath(): string {
-        return 'C:\\xampp\\php\\php';
-        //return this._configuration.get("phpExecutablePath")
+        return this._configuration.get("phpExecutablePath")
     }
 
     private _getShellExecutable(): string {
